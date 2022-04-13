@@ -1,4 +1,8 @@
 {% extends 'base.html' %} {% block title %} Math Worksheet Generator {% endblock
 %} {% block content %}
 <h1>Math Worksheet Generator</h1>
+<form method="POST">
+	{% include 'form.html' %}
+	<button class="btn-primary" type="submit">Generate Worksheet!</button>
+</form>
 {% endblock %}
