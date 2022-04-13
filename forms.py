@@ -12,4 +12,4 @@ class CreateWorksheetForm(FlaskForm):
         ('Multiplication', 'Multiplication'), 
         ('Division', 'Division'), 
         ('Random', 'Random')])
-    numberQuestions = IntegerRangeField('Number of Questions', validators=[NumberRange(min=5, max=20)])
+    number_questions = IntegerRangeField('Number of Questions', validators=[NumberRange(min=5, max=20)])

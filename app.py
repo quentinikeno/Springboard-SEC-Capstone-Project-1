@@ -11,9 +11,17 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "very secret key")
 toolbar = DebugToolbarExtension(app)
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     form = CreateWorksheetForm()
+    
+    if form.validate_on_submit():
+        name = form.name.data
+        operations = form.operations.data
+        number_questions = form.number_questions.data
+        
+        print(name, operations, number_questions)
+    
     return render_template('index.html', form=form)
 
 if __name__ == '__main__':
