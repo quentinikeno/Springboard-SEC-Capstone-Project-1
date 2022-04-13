@@ -5,7 +5,7 @@ from wtforms.validators import DataRequired, Email, Length, NumberRange
 class CreateWorksheetForm(FlaskForm):
     """Form for creating a new Worksheet."""
 
-    name = TextAreaField('Name', validators=[DataRequired()])
+    name = StringField('Name', validators=[DataRequired()])
     operations = SelectField('Type of Operations', choices=[
         ('Addition', 'Addition'), 
         ('Subtraction', 'Subtraction'), 
