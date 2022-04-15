@@ -1,13 +1,3 @@
 .text-answer {
 	color: red;
 }
-
-@page {
-	size: A5;
-	margin: 1cm;
-}
-@media print {
-	nav {
-		display: none;
-	}
-}
