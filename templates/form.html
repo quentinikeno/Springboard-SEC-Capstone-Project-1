@@ -1,10 +1,11 @@
 {{ form.hidden_tag() }} {% for field in form if field.widget.input_type !=
 'hidden' %}
 <p class="form-group">
-	{{ field.label }} {% if field.type == 'IntegerRangeField' %} {{
-	field(class_="form-range") }} {% elif field.type == 'SelectField' %} {{
-	field(class_="form-select") }} {% else %} {{ field(class_="form-control") }}
-	{% endif %} {% for error in field.errors %}
+	{{ field.label }} {% if field.type == 'IntegerRangeField' %}
+	<span id="range-val" class="fw-bold"></span> {{ field(class_="form-range")
+	}} {% elif field.type == 'SelectField' %} {{ field(class_="form-select") }}
+	{% else %} {{ field(class_="form-control") }} {% endif %} {% for error in
+	field.errors %}
 	<span class="form-text text-danger">{{ error }}</span>
 	{% endfor %}
 </p>
