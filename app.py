@@ -1,13 +1,13 @@
 import os
 
-from flask import Flask, render_template, make_response
+from flask import Flask, render_template
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 
 from forms import CreateWorksheetForm
 
 import asyncio
-import aiohttp
+from api_helpers import get_math_data
 
 app = Flask(__name__)
 
@@ -16,23 +16,6 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "very secret key")
 toolbar = DebugToolbarExtension(app)
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
-
-def get_tasks(session, operations, number_questions):
-    """Create a list of tasks for asyncio to perform asynchronously."""
-    tasks = []
-    for i in range(number_questions):
-        tasks.append(session.get(f"{X_MATH_API_BASE_URL}/{operations}", ssl=False))
-    return tasks
-
-async def get_math_data(operations, number_questions):
-    """Asynchronously call math api to return a list of math expressions."""
-    results = []
-    async with aiohttp.ClientSession() as session:
-            tasks = get_tasks(session, operations, number_questions)
-            responses = await asyncio.gather(*tasks)
-            for response in responses:
-                results.append(await response.json())
-    return results
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -43,7 +26,7 @@ def index():
         operations = form.operations.data
         number_questions = int(form.number_questions.data)
         
-        questions = asyncio.run(get_math_data(operations, number_questions))
+        questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions))
         
         html = render_template('worksheet.html', questions=questions)
         return render_pdf(HTML(string=html))
