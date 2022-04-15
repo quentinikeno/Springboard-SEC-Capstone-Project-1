@@ -7,9 +7,10 @@ class CreateWorksheetForm(FlaskForm):
 
     name = StringField('Name', validators=[DataRequired()])
     operations = SelectField('Type of Operations', choices=[
-        ('Addition', 'Addition'), 
-        ('Subtraction', 'Subtraction'), 
-        ('Multiplication', 'Multiplication'), 
-        ('Division', 'Division'), 
-        ('Random', 'Random')])
+        ('Random', 'random'),
+        ('Addition', 'add'), 
+        ('Subtraction', 'sub'), 
+        ('Multiplication', 'mul'), 
+        ('Division', 'div')
+        ])
     number_questions = IntegerRangeField('Number of Questions', validators=[NumberRange(min=5, max=20)])
