@@ -17,7 +17,21 @@
 			height="600px"
 		/>
 	</div>
-	<div class="col-12 col-md-6"></div>
+	<div class="col-12 col-md-6">
+		<a
+			href="{{url_for('new_answer_key_pdf')}}"
+			class="btn btn-info"
+			target="_blank"
+			>Open Answer Key in New Tab</a
+		>
+		<embed
+			src="{{url_for('new_answer_key_pdf')}}"
+			class="embed-responsive-item"
+			type="application/pdf"
+			width="100%"
+			height="600px"
+		/>
+	</div>
 </div>
 
 {% endblock %}
