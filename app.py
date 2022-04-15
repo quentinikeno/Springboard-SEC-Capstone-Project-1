@@ -1,7 +1,8 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, make_response
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_weasyprint import HTML, render_pdf
 
 from forms import CreateWorksheetForm
 
@@ -42,9 +43,10 @@ def index():
         operations = form.operations.data
         number_questions = int(form.number_questions.data)
         
-        asyncio.run(get_math_data(operations, number_questions))
+        questions = asyncio.run(get_math_data(operations, number_questions))
         
-        print(name, operations, number_questions)
+        html = render_template('worksheet.html', questions=questions)
+        return render_pdf(HTML(string=html))
     
     return render_template('index.html', form=form)
  
