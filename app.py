@@ -46,3 +46,9 @@ def new_worksheet_pdf():
     """Render pdf for new worksheet."""
     html = render_template('worksheet.html', questions=session['questions'])
     return render_pdf(HTML(string=html))
+
+@app.route('/new/answer-key/pdf')
+def new_answer_key_pdf():
+    """Render pdf for new answer key."""
+    html = render_template('answer_key.html', questions=session['questions'])
+    return render_pdf(HTML(string=html))
