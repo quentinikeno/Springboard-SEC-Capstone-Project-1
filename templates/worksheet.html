@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block content %}
+<p>
+    <div class="row mb-3">
+        <div class="col-9">Name: _____________________________________________</div>
+        <div class="col-3">Date: ___________</div>
+    </div>
+</p>
+
+<div class="row">
+	{% for question in questions %}
+	<div class="col-6 my-3">{{question.expression}} =</div>
+	{% endfor %}
+</div>
+
+{% endblock %}
