@@ -5,7 +5,7 @@ content %}
 <div class="row">
 	{% for question in questions %}
 	<div class="col-6 my-3">
-		{{question.expression}} =
+		{{loop.index}}) {{question.expression}} =
 		<span class="text-answer">{{question.answer}}</span>
 	</div>
 	{% endfor %}
