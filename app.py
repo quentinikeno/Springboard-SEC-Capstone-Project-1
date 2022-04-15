@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect, session, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 
@@ -19,6 +19,7 @@ X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    """Show form to allow users to specify parameters for their worksheet.  Use the form data to call X-Math API to get math problems."""
     form = CreateWorksheetForm()
     
     if form.validate_on_submit():
@@ -28,8 +29,20 @@ def index():
         
         questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions))
         
-        html = render_template('worksheet.html', questions=questions)
-        return render_pdf(HTML(string=html))
+        # Add questions to session
+        session['questions'] = questions
+        
+        return redirect(url_for('new_worksheet_detail'))
     
     return render_template('index.html', form=form)
  
+@app.route('/new')
+def new_worksheet_detail():
+     """Show options for new worksheet, such as downloading and saving."""
+     return render_template('new_detail.html')
+     
+@app.route('/new/worksheets/pdf')
+def new_worksheet_pdf():
+    """Render pdf for new worksheet."""
+    html = render_template('worksheet.html', questions=session['questions'])
+    return render_pdf(HTML(string=html))
