@@ -4,13 +4,13 @@
 <div class="row">
 	<div class="col-12 col-md-6 embed-responsive">
 		<a
-			href="{{url_for('new_worksheet_pdf')}}"
+			href="{{url_for('render_new_pdf', sheet='worksheet')}}"
 			class="btn btn-primary"
 			target="_blank"
 			>Open Worksheet in New Tab</a
 		>
 		<embed
-			src="{{url_for('new_worksheet_pdf')}}"
+			src="{{url_for('render_new_pdf', sheet='worksheet')}}"
 			class="embed-responsive-item"
 			type="application/pdf"
 			width="100%"
@@ -19,13 +19,13 @@
 	</div>
 	<div class="col-12 col-md-6">
 		<a
-			href="{{url_for('new_answer_key_pdf')}}"
+			href="{{url_for('render_new_pdf', sheet='answer-key')}}"
 			class="btn btn-info"
 			target="_blank"
 			>Open Answer Key in New Tab</a
 		>
 		<embed
-			src="{{url_for('new_answer_key_pdf')}}"
+			src="{{url_for('render_new_pdf', sheet='answer-key')}}"
 			class="embed-responsive-item"
 			type="application/pdf"
 			width="100%"
