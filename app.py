@@ -10,7 +10,7 @@ from models import connect_db, db, User
 
 from functools import wraps
 
-from forms import CreateWorksheetForm, UserRegisterForm
+from forms import CreateWorksheetForm, UserRegisterForm, UserLoginForm
 
 import asyncio
 from api_helpers import get_math_data
@@ -29,16 +29,32 @@ connect_db(app)
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
 
-def check_session_questions(f):
+###################################################################################################
+# Route Decorators
+###################################################################################################
+
+def check_session_questions(function):
     """Check if there are questions in session.  If not redirect to index route."""
-    @wraps(f)
-    def decorator(*args, **kwargs):
+    @wraps(function)
+    def check_session_questions_decorator(*args, **kwargs):
         if session.get('questions'):
-            return f(*args, **kwargs)
+            return function(*args, **kwargs)
         else:
             flash('Please generate a new worksheet before accessing that page.', 'warning')
             return redirect(url_for('index'))
-    return decorator
+    return check_session_questions_decorator
+
+def check_if_authorized(function):
+    """Check if user is logged in using flask global variable.  If not redirect to login route."""
+    @wraps(function)
+    def check_if_authorized_decorator(*args, **kwargs):
+        if not g.user:
+            flash("Access unauthorized.  Please log in first to view this page.", "danger")
+            session["wants_url"] = request.url
+            return redirect(url_for("login"))
+        else:
+            return function(*args, **kwargs)
+    return check_if_authorized_decorator
 
 ###################################################################################################
 # Worksheet Routes
@@ -79,6 +95,7 @@ def render_new_pdf(sheet):
 ###################################################################################################
 # User Log In and Log Out
 ###################################################################################################
+
 @app.before_request
 def add_user_to_g():
     """If user is logged in and in session add the user to flask global."""
@@ -98,6 +115,8 @@ def do_logout():
     """Remove user from session when logging out."""
     if 'user' in session:
         del session['user']
+    if 'wants_url' in session:
+        del session['wants_url']
 
 ###################################################################################################
 # User Routes
@@ -126,6 +145,26 @@ def user_register():
             flash("Username already taken", 'danger')
         
     return render_template('/user-templates/user-register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Authenticate a user."""
+    form = UserLoginForm()
+    
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.username.data
+        
+        user = User.authenticate(username, password)
+        
+        if user:
+            do_login(user)
+            flash(f'Login succesful!  Welcome back {user.username}!', 'success')
+            return redirect(url_for(user_show, user.username))
+        else:
+            flash('Invalid username or password.  Please try again.', 'danger')
+        
+    return render_template('/user-templates/user-login.html', form=form)
 
 @app.route('/users/<username>')
 def user_show(username):
