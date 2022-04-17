@@ -101,7 +101,7 @@ def add_user_to_g():
     """If user is logged in and in session add the user to flask global."""
 
     if 'user' in session:
-        g.user = User.query.get(session['user'])
+        g.user = User.query.get_or_404(session['user'])
     else:
         g.user = None
 
@@ -119,7 +119,7 @@ def do_logout():
         del session['wants_url']
 
 ###################################################################################################
-# User Routes
+# User Register/Log In/Log Out Routes
 ###################################################################################################
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -139,12 +139,12 @@ def user_register():
             
             do_login(new_user)
             
-            return redirect(url_for(user_show, username=new_user.username))
+            return redirect(url_for('user_show', username=new_user.username))
         
         except IntegrityError:
             flash("Username already taken", 'danger')
         
-    return render_template('/user-templates/user-register.html', form=form)
+    return render_template('/user-templates/register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -164,9 +164,22 @@ def login():
         else:
             flash('Invalid username or password.  Please try again.', 'danger')
         
-    return render_template('/user-templates/user-login.html', form=form)
+    return render_template('/user-templates/login.html', form=form)
+
+@app.route('/logout')
+@check_if_authorized
+def logout():
+    """Log out a user."""
+    do_logout(g.user)
+    flash("You've been logged out successfully.", "success")
+    return redirect(url_for('index'))
+
+###################################################################################################
+# User Routes
+###################################################################################################
 
 @app.route('/users/<username>')
+@check_if_authorized
 def user_show(username):
     """Show details for user."""
     
