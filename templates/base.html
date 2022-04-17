@@ -12,6 +12,13 @@
 		/>
 		<link
 			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+			integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"
+		/>
+		<link
+			rel="stylesheet"
 			href="{{ url_for('static', filename='app.css') }}"
 		/>
 		<script
@@ -36,7 +43,7 @@
 		<title>{% block title %} {% endblock %}</title>
 	</head>
 	<body>
-		<main class="my-3 container">
+		<main class="my-5 container">
 			{% for category, msg in get_flashed_messages(with_categories=true)
 			%}
 			<div class="alert alert-{{category}}" role="alert">{{ msg }}</div>
