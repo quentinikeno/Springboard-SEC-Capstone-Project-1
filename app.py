@@ -153,7 +153,7 @@ def login():
     
     if form.validate_on_submit():
         username = form.username.data
-        password = form.username.data
+        password = form.password.data
         
         user = User.authenticate(username, password)
         
@@ -163,7 +163,7 @@ def login():
             if 'wants_url' in session:
                 return redirect(session['wants_url'])
             else:
-                return redirect(url_for(user_show, user.username))
+                return redirect(url_for('user_show', username=user.username))
         else:
             flash('Invalid username or password.  Please try again.', 'danger')
         
