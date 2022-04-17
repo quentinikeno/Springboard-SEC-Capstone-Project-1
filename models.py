@@ -16,7 +16,7 @@ class User(db.Model):
     
     __tablename__ = 'users'
     
-    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     
     username = db.Column(db.String(25), unique=True, nullable=False)
     
@@ -29,7 +29,7 @@ class User(db.Model):
         return f"<User username={self.username}>"
     
     @classmethod
-    def registerNewUser(cls, username, password, email):
+    def register(cls, username, password, email):
         """Hash password and create new user."""
         hashed = bcrypt.generate_password_hash(password)
         # turn bytestring into normal (unicode utf8) string

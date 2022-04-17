@@ -1,14 +1,12 @@
-import os
+from app import app
 from unittest import TestCase
-
 from models import db, User
-
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 
-os.environ['DATABASE_URL'] = "postgresql:///worksheet_generator_test"
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///worksheet_generator_test"
+app.config['TESTING'] = True
 
-from app import app
-
+db.drop_all()
 db.create_all()
 
 class UserModelTestCase(TestCase):
@@ -19,12 +17,13 @@ class UserModelTestCase(TestCase):
         
         User.query.delete()
         
-        user = User.registerNewUser(
+        user = User.register(
             "JaneDoe",
             "GreatPassword123",
             "test@email.com"
         )
         
+        db.session.add(user)
         db.session.commit()
         
         self.user = user
@@ -46,3 +45,27 @@ class UserModelTestCase(TestCase):
         db.session.commit()
 
         self.assertEqual(f"{newUser}", "<User username=testuser>")
+        
+    def test_user_register(self):
+        """Can a new user register?"""
+        
+        user = User.register("testUser", "SecretPassword123", "test@mail.com")
+        db.session.add(user)
+        db.session.commit()
+        
+        self.assertIsInstance(user, User)
+    
+    def test_user_register_non_unique_username(self):
+        """Test if User.register fails to create a new user given non-unique username."""
+        user = User.register("JaneDoe", "password", "testurl@mail.com")
+        db.session.add(user)
+        
+        with self.assertRaises(IntegrityError):
+            db.session.commit()
+
+            
+    def test_user_register_nullable_fields(self):
+        """Test if User.register fails to create a new user given non-nullable fields not provided."""
+        
+        with self.assertRaises(TypeError):
+            User.register()

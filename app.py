@@ -17,7 +17,7 @@ app = Flask(__name__)
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "very secret key")
-os.environ['DATABASE_URL'] = "postgresql:///worksheet_generator"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///worksheet_generator'
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SQLALCHEMY_ECHO"] = True
 
