@@ -149,6 +149,9 @@ def user_register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Authenticate a user."""
+    if g.user:
+        return redirect(url_for('user_show', username=g.user.username))
+    
     form = UserLoginForm()
     
     if form.validate_on_submit():
