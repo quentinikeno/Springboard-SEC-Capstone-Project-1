@@ -76,3 +76,27 @@ class UserViewsTestCase(TestCase):
             self.assertIn('<h1>Your Profile</h1>', html)
             with client.session_transaction() as session:
                 self.assertEqual(session['user'], self.user.id)
+                
+    def test_login_post_wrong_password(self):
+        """Can a user login using the wrong password?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'wrongPW'}
+            resp = client.post('/login', data=data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('Invalid username or password.  Please try again.', html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))
+                
+    def test_login_post_wrong_username(self):
+        """Can a user login using the wrong username?"""
+        with app.test_client() as client:
+            data = {'username': 'WrongUser', 'password': 'GreatPassword123'}
+            resp = client.post('/login', data=data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('Invalid username or password.  Please try again.', html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))
