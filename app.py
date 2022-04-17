@@ -50,6 +50,7 @@ def check_if_authorized(function):
     def check_if_authorized_decorator(*args, **kwargs):
         if not g.user:
             flash("Access unauthorized.  Please log in first to view this page.", "danger")
+            # Set in the session the url that the user was trying to go to before logging in, so we can redirect later.
             session["wants_url"] = request.url
             return redirect(url_for("login"))
         else:
@@ -142,7 +143,7 @@ def user_register():
             return redirect(url_for('user_show', username=new_user.username))
         
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            flash("Username already taken.", 'danger')
         
     return render_template('/users/register.html', form=form)
 
@@ -192,6 +193,31 @@ def user_show():
     
 @app.route('/user/edit', methods=['GET', 'POST'])
 @check_if_authorized
-def user_edit(username):
+def user_edit():
     """Edit profile for current user."""
+    form = UserRegisterEditForm()
     
+    if form.validate_on_submit():
+        username = form.username.data
+        email = form.email.data
+        password = form.password.data
+        #Authenticate the user to give them permission to edit.
+        user = User.authenticate(g.user.username, password)
+        
+        if user:
+            try:
+                user.username = username
+                user.email = email
+                
+                db.session.add(user)
+                db.session.commit()
+                
+                flash("Profile successfully updated.", "success")
+                return redirect(url_for("user_show"))
+                
+            except IntegrityError:
+                flash("Username already taken.", 'danger')
+        
+        flash("Invalid username or password.", 'danger')
+    
+    return render_template('users/edit.html', form=form, user=g.user)
