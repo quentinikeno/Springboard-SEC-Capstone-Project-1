@@ -4,6 +4,7 @@ from models import db, User
 from sqlalchemy.exc import IntegrityError
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///worksheet_generator_test"
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['TESTING'] = True
 
 db.drop_all()

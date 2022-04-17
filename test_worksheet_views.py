@@ -4,8 +4,8 @@ from app import app
 from flask import session, url_for
 #from models import db
 
-#app.config['SQLALCHEMY_DATABASE_URI'] = 
-#app.config['SQLALCHEMY_ECHO'] = False
+app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///worksheet_generator_test"
+app.config['SQLALCHEMY_ECHO'] = False
 app.config['TESTING'] = True
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 app.config['WTF_CSRF_ENABLED'] = False
