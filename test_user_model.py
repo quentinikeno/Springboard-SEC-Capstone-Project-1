@@ -1,7 +1,7 @@
 from app import app
 from unittest import TestCase
 from models import db, User
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
+from sqlalchemy.exc import IntegrityError
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///worksheet_generator_test"
 app.config['TESTING'] = True
