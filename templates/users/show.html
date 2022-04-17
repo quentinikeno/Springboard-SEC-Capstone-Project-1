@@ -1,5 +1,15 @@
-{% extends './base.html' %} {% block title %} Log In User {% endblock %} {%
-block content %}
+{% extends './base.html' %} {% from "./macros/macros.html" import nav_link with
+context %} {% block title %} User Profile {% endblock %} {% block content %}
 <h1>Your Profile</h1>
-<p>{{user.username}}</p>
+<div class="card text-center">
+	<div class="card-body">
+		<i class="fa-solid fa-user fa-5x"></i>
+		<h5 class="card-title mt-3">{{user.username}}</h5>
+	</div>
+	<div class="card-footer">
+		<ul class="nav nav-pills card-header-pills">
+			{{ nav_link('user_show', 'Your Worksheets') }}
+		</ul>
+	</div>
+</div>
 {% endblock %}
