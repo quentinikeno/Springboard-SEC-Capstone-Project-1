@@ -100,3 +100,29 @@ class UserViewsTestCase(TestCase):
             self.assertIn('Invalid username or password.  Please try again.', html)
             with client.session_transaction() as session:
                 self.assertIsNone(session.get('user'))
+                
+    def test_logout(self):
+        """Can a user login and then logout?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            resp = client.post('/logout', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Math Worksheet Generator</h1>', html)
+            self.assertIn("You&#39;ve been logged out successfully.", html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))
+                
+    def test_logout_not_logged_in(self):
+        """Can a user logout without logging in first?"""
+        with app.test_client() as client:
+            resp = client.post('/logout', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))
