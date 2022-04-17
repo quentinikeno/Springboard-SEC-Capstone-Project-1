@@ -160,7 +160,10 @@ def login():
         if user:
             do_login(user)
             flash(f'Login succesful!  Welcome back {user.username}!', 'success')
-            return redirect(url_for(user_show, user.username))
+            if 'wants_url' in session:
+                return redirect(session['wants_url'])
+            else:
+                return redirect(url_for(user_show, user.username))
         else:
             flash('Invalid username or password.  Please try again.', 'danger')
         
