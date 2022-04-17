@@ -1,8 +1,10 @@
 import os
 
-from flask import Flask, render_template, redirect, session, url_for
+from flask import Flask, render_template, redirect, session, url_for, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
+
+from functools import wraps
 
 from forms import CreateWorksheetForm
 
@@ -16,6 +18,17 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "very secret key")
 toolbar = DebugToolbarExtension(app)
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
+
+def check_session_questions(f):
+    """Check if there are questions in session.  If not redirect to index route."""
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        if session.get('questions'):
+            return f(*args, **kwargs)
+        else:
+            flash('Please generate a new worksheet before accessing that page.', 'warning')
+            return redirect(url_for('index'))
+    return decorator
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -37,11 +50,13 @@ def index():
     return render_template('index.html', form=form)
  
 @app.route('/worksheet/new')
+@check_session_questions
 def new_worksheet_detail():
      """Show options for new worksheet, such as downloading and saving."""
      return render_template('new-detail.html')
      
 @app.route('/<sheet>/new/pdf')
+@check_session_questions
 def render_new_pdf(sheet):
     """Render pdf for new worksheet or answer key."""
     html = render_template(f'{sheet}.html', questions=session['questions'])
