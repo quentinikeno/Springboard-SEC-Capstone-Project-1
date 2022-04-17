@@ -69,3 +69,18 @@ class UserModelTestCase(TestCase):
         
         with self.assertRaises(TypeError):
             User.register()
+            
+    def test_user_authenticate(self):
+        """Test if User.authenticate successfully returns a user when given a valid username and password."""
+        auth_user = User.authenticate("JaneDoe", "GreatPassword123")
+        self.assertEqual(auth_user, self.user)
+        
+    def test_user_authenticate_wrong_username(self):
+        """Test if User.authenticate fails to return a user when given an invalid username."""
+        auth_user = User.authenticate("WrongName", "GreatPassword123")
+        self.assertFalse(auth_user)
+        
+    def test_user_authenticate_wrong_password(self):
+        """Test if User.authenticate fails to return a user when given an invalid password."""
+        auth_user = User.authenticate("JaneDoe", "WrongPassword123")
+        self.assertFalse(auth_user)
