@@ -1,6 +1,6 @@
 {% extends './base.html' %} {% block title %} Log In User {% endblock %} {%
 block content %}
-<h1>Log Into Your Account</h1>
+<h1>Log In to Your Account</h1>
 <form action="{{ url_for('login') }}" method="post">
 	{% include './form.html' %}
 	<button class="btn btn-primary" type="submit">Log In!</button>

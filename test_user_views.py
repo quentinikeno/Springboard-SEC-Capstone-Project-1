@@ -36,6 +36,7 @@ class UserViewsTestCase(TestCase):
         db.session.rollback()
         
     def test_register_get(self):
+        """Can a user see the page to register?"""
         with app.test_client() as client:
             resp = client.get('/register')
             html = resp.get_data(as_text=True)
@@ -44,6 +45,7 @@ class UserViewsTestCase(TestCase):
             self.assertIn('<h1>Register Your New Account</h1>', html)
             
     def test_register_post(self):
+        """Can a user register a new account?"""
         with app.test_client() as client:
             data = {'username': 'test', 'password': 'testPassword', 'email': 'test2@email.com'}
             resp = client.post('/register', data=data, follow_redirects=True)
@@ -53,3 +55,24 @@ class UserViewsTestCase(TestCase):
             self.assertIn('<h1>Your Profile</h1>', html)
             with client.session_transaction() as session:
                 self.assertIsNotNone(session['user'])
+                
+    def test_login_get(self):
+        """Can user see the page to login?"""
+        with app.test_client() as client:
+            resp = client.get('/login')
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            
+    def test_login_post(self):
+        """Can a user login?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            resp = client.post('/login', data=data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            with client.session_transaction() as session:
+                self.assertEqual(session['user'], self.user.id)
