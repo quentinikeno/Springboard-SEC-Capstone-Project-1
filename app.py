@@ -4,6 +4,8 @@ from flask import Flask, render_template, redirect, session, url_for, flash
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 
+from models import connect_db, db, User
+
 from functools import wraps
 
 from forms import CreateWorksheetForm
@@ -15,7 +17,13 @@ app = Flask(__name__)
 
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "very secret key")
+os.environ['DATABASE_URL'] = "postgresql:///worksheet_generator"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SQLALCHEMY_ECHO"] = True
+
 toolbar = DebugToolbarExtension(app)
+
+connect_db(app)
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
 
