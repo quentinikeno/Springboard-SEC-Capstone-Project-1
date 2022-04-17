@@ -126,3 +126,25 @@ class UserViewsTestCase(TestCase):
             self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
             with client.session_transaction() as session:
                 self.assertIsNone(session.get('user'))
+                
+    def test_user_show(self):
+        """Can a user login and then see their user profile show page?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            resp = client.get('/user', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn("JaneDoe", html)
+            
+    def test_user_show_not_logged_in(self):
+        """Can a user see their user profile show page when not logged in?"""
+        with app.test_client() as client:
+            resp = client.get('/user', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
