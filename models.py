@@ -5,7 +5,6 @@ db = SQLAlchemy()
 
 bcrypt = Bcrypt()
 
-
 def connect_db(app):
     """Connect to database."""
 
@@ -42,7 +41,7 @@ class User(db.Model):
         """Check that a user is exists and the password provided is correct."""
         user = User.query.filter_by(username=username).first()
         
-        if user and bcrypt.check_password_hash(user.password, password)
+        if user and bcrypt.check_password_hash(user.password, password):
             return user
         else:
             return False
