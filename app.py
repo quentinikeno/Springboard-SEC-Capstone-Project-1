@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, redirect, session, url_for, flash, g
+from flask import Flask, render_template, redirect, session, request, url_for, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 
@@ -101,7 +101,7 @@ def add_user_to_g():
     """If user is logged in and in session add the user to flask global."""
 
     if 'user' in session:
-        g.user = User.query.get_or_404(session['user'])
+        g.user = User.query.get(session['user'])
     else:
         g.user = None
 
@@ -169,11 +169,11 @@ def login():
         
     return render_template('/users/login.html', form=form)
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 @check_if_authorized
 def logout():
     """Log out a user."""
-    do_logout(g.user)
+    do_logout()
     flash("You've been logged out successfully.", "success")
     return redirect(url_for('index'))
 
