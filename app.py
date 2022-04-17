@@ -1,14 +1,16 @@
 import os
 
-from flask import Flask, render_template, redirect, session, url_for, flash
+from flask import Flask, render_template, redirect, session, url_for, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
+
+from sqlalchemy.exc import IntegrityError
 
 from models import connect_db, db, User
 
 from functools import wraps
 
-from forms import CreateWorksheetForm
+from forms import CreateWorksheetForm, UserRegisterForm
 
 import asyncio
 from api_helpers import get_math_data
@@ -37,6 +39,10 @@ def check_session_questions(f):
             flash('Please generate a new worksheet before accessing that page.', 'warning')
             return redirect(url_for('index'))
     return decorator
+
+###################################################################################################
+# Worksheet Routes
+###################################################################################################
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -69,3 +75,59 @@ def render_new_pdf(sheet):
     """Render pdf for new worksheet or answer key."""
     html = render_template(f'{sheet}.html', questions=session['questions'])
     return render_pdf(HTML(string=html))
+
+###################################################################################################
+# User Log In and Log Out
+###################################################################################################
+@app.before_request
+def add_user_to_g():
+    """If user is logged in and in session add the user to flask global."""
+
+    if 'user' in session:
+        g.user = User.query.get(session['user'])
+    else:
+        g.user = None
+
+
+def do_login(user):
+    """Add user to session when logging in."""
+    session['user'] = user.id
+
+
+def do_logout():
+    """Remove user from session when logging out."""
+    if 'user' in session:
+        del session['user']
+
+###################################################################################################
+# User Routes
+###################################################################################################
+
+@app.route('/register', methods=['GET', 'POST'])
+def user_register():
+    """Show form to register new user."""
+    form = UserRegisterForm()
+    
+    if form.validate_on_submit():
+        try:
+            username = form.username.data
+            password = form.password.data
+            email = form.email.data
+            
+            new_user = User.register(username, password, email)
+            db.session.add(new_user)
+            db.session.commit()
+            
+            do_login(new_user)
+            
+            return redirect(url_for(user_show, username=new_user.username))
+        
+        except IntegrityError:
+            flash("Username already taken", 'danger')
+        
+    return render_template('/user-templates/user-register.html', form=form)
+
+@app.route('/users/<username>')
+def user_show(username):
+    """Show details for user."""
+    
