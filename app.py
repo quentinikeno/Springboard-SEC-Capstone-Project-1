@@ -10,7 +10,7 @@ from models import connect_db, db, User
 
 from functools import wraps
 
-from forms import CreateWorksheetForm, UserRegisterForm, UserLoginForm
+from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm
 
 import asyncio
 from api_helpers import get_math_data
@@ -125,7 +125,7 @@ def do_logout():
 @app.route('/register', methods=['GET', 'POST'])
 def user_register():
     """Show form to register new user."""
-    form = UserRegisterForm()
+    form = UserRegisterEditForm()
     
     if form.validate_on_submit():
         try:
@@ -192,4 +192,9 @@ def user_show(username):
         flash("Sorry you aren't allowed to see this user.", "danger")
         return redirect(url_for(user_show, g.user.username))
     return render_template('users/show.html', user=g.user)
+    
+@app.route('/users/<username>/edit', methods=['GET', 'POST'])
+@check_if_authorized
+def user_edit(username):
+    """Edit profile for current user."""
     
