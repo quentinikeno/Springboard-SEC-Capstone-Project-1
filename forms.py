@@ -15,7 +15,12 @@ class CreateWorksheetForm(FlaskForm):
     number_questions = IntegerRangeField('Number of Questions', validators=[NumberRange(min=5, max=20)])
     
 class UserRegisterForm(FlaskForm):
-    """For for signing up and registering users."""
+    """Form for signing up and registering users."""
     username = StringField('Username', validators=[DataRequired()])
     password = StringField('Password', validators=[DataRequired()])
     email = StringField('Email', validators=[DataRequired()])
+    
+class UserLoginForm(FlaskForm):
+    """Form for loggin in users."""
+    username = StringField('Username', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
