@@ -197,6 +197,10 @@ def user_edit():
     """Edit profile for current user."""
     form = UserRegisterEditForm()
     
+    if request.method == 'GET':
+        form.username.data = g.user.username
+        form.email.data = g.user.email
+    
     if form.validate_on_submit():
         username = form.username.data
         email = form.email.data
