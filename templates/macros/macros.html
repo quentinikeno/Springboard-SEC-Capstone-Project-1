@@ -1,0 +1,16 @@
+{% macro nav_link(endpoint, text) %} {% if request.endpoint.endswith(endpoint)
+%}
+<li class="nav-item">
+	<a
+		class="nav-link active"
+		href="{{ url_for(endpoint, username=user.username) }}"
+		>{{text}}</a
+	>
+</li>
+{% else %}
+<li class="nav-item">
+	<a class="nav-link" href="{{ url_for(endpoint, username=user.username) }}"
+		>{{text}}</a
+	>
+</li>
+{% endif %} {% endmacro %}
