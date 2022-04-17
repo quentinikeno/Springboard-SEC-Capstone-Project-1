@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, Email, Length, NumberRange
 
 class CreateWorksheetForm(FlaskForm):
     """Form for creating a new Worksheet."""
-
     name = StringField('Name', validators=[DataRequired()])
     operations = SelectField('Type of Operations', choices=[
         ('random', 'Random'),
@@ -14,3 +13,9 @@ class CreateWorksheetForm(FlaskForm):
         ('div', 'Division'), 
         ])
     number_questions = IntegerRangeField('Number of Questions', validators=[NumberRange(min=5, max=20)])
+    
+class UserRegisterForm(FlaskForm):
+    """For for signing up and registering users."""
+    username = StringField('Username', validators=[DataRequired()])
+    password = StringField('Password', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired()])
