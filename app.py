@@ -144,7 +144,7 @@ def user_register():
         except IntegrityError:
             flash("Username already taken", 'danger')
         
-    return render_template('/user-templates/register.html', form=form)
+    return render_template('/users/register.html', form=form)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -164,7 +164,7 @@ def login():
         else:
             flash('Invalid username or password.  Please try again.', 'danger')
         
-    return render_template('/user-templates/login.html', form=form)
+    return render_template('/users/login.html', form=form)
 
 @app.route('/logout')
 @check_if_authorized
@@ -182,4 +182,8 @@ def logout():
 @check_if_authorized
 def user_show(username):
     """Show details for user."""
+    if g.user.username != username:
+        flash("Sorry you aren't allowed to see this user.", "danger")
+        return redirect(url_for(user_show, g.user.username))
+    return render_template('users/show.html', user=g.user)
     
