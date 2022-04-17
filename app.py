@@ -166,7 +166,7 @@ def login():
             if 'wants_url' in session:
                 return redirect(session['wants_url'])
             else:
-                return redirect(url_for('user_show', username=user.username))
+                return redirect(url_for('user_show'))
         else:
             flash('Invalid username or password.  Please try again.', 'danger')
         
@@ -184,16 +184,13 @@ def logout():
 # User Routes
 ###################################################################################################
 
-@app.route('/users/<username>')
+@app.route('/user')
 @check_if_authorized
-def user_show(username):
+def user_show():
     """Show details for user."""
-    if g.user.username != username:
-        flash("Sorry you aren't allowed to see this user.", "danger")
-        return redirect(url_for(user_show, g.user.username))
     return render_template('users/show.html', user=g.user)
     
-@app.route('/users/<username>/edit', methods=['GET', 'POST'])
+@app.route('/user/edit', methods=['GET', 'POST'])
 @check_if_authorized
 def user_edit(username):
     """Edit profile for current user."""
