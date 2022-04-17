@@ -36,12 +36,12 @@ def index():
     
     return render_template('index.html', form=form)
  
-@app.route('/new')
+@app.route('/worksheet/new')
 def new_worksheet_detail():
      """Show options for new worksheet, such as downloading and saving."""
      return render_template('new-detail.html')
      
-@app.route('/new/<sheet>/pdf')
+@app.route('/<sheet>/new/pdf')
 def render_new_pdf(sheet):
     """Render pdf for new worksheet or answer key."""
     html = render_template(f'{sheet}.html', questions=session['questions'])
