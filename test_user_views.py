@@ -36,6 +36,7 @@ class UserViewsTestCase(TestCase):
         db.session.commit()
         
         self.user = user
+        self.user_2 = user_2
         
     def tearDown(self):
         """Rollback any failed transactions."""
@@ -247,3 +248,31 @@ class UserViewsTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<h1>Log In to Your Account</h1>', html)
             self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
+            
+    def test_user_edit_post_duplicate_username(self):
+        """Can a user login and then update their profile when the username they are updating is taken by another user?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            updated_data = {'username': 'JohnSmith', 'password': 'GreatPassword123', 'email': 'brandnew@email.com'}
+            resp = client.post('/user/edit', data=updated_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('That username is already taken by another user.  Please use a different username.', html)
+            
+    def test_user_edit_post_duplicate_email(self):
+        """Can a user login and then update their profile when the email they are updating is taken by another user?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            updated_data = {'username': 'test', 'password': 'GreatPassword123', 'email': 'test2@email.com'}
+            resp = client.post('/user/edit', data=updated_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('That email is already taken by another user.  Please use a different email address.', html)
