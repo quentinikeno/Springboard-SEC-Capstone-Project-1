@@ -45,3 +45,13 @@ class User(db.Model):
             return user
         else:
             return False
+        
+    @classmethod
+    def is_username_taken(cls, username):
+        """Check if a username is taken.  Returns a user with a given username if one exists, else returns None."""
+        return User.query.filter_by(username=username).first()
+
+    @classmethod
+    def is_email_taken(cls, email):
+        """Check if a email is taken.  Returns a user with a given email if one exists, else returns None."""
+        return User.query.filter_by(email=email).first()
