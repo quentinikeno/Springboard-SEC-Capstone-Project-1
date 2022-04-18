@@ -26,7 +26,13 @@ class UserViewsTestCase(TestCase):
             "test@email.com"
         )
         
-        db.session.add(user)
+        user_2 = User.register(
+            "JohnSmith",
+            "CoolPassword123",
+            "test2@email.com"
+        )
+        
+        db.session.add_all([user, user_2])
         db.session.commit()
         
         self.user = user
@@ -47,7 +53,7 @@ class UserViewsTestCase(TestCase):
     def test_register_post(self):
         """Can a user register a new account?"""
         with app.test_client() as client:
-            data = {'username': 'test', 'password': 'testPassword', 'email': 'test2@email.com'}
+            data = {'username': 'test', 'password': 'testPassword', 'email': 'test3@email.com'}
             resp = client.post('/register', data=data, follow_redirects=True)
             html = resp.get_data(as_text=True)
             
@@ -55,6 +61,18 @@ class UserViewsTestCase(TestCase):
             self.assertIn('<h1>Your Profile</h1>', html)
             with client.session_transaction() as session:
                 self.assertIsNotNone(session['user'])
+                
+    def test_register_post_duplicate_username(self):
+        """Can a user register a new account with the same username as another user?"""
+        with app.test_client() as client:
+            data = {'username': 'JohnSmith', 'password': 'testPassword', 'email': 'test3@email.com'}
+            resp = client.post('/register', data=data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Register Your New Account</h1>', html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))
                 
     def test_login_get(self):
         """Can user see the page to login?"""
@@ -143,6 +161,73 @@ class UserViewsTestCase(TestCase):
         """Can a user see their user profile show page when not logged in?"""
         with app.test_client() as client:
             resp = client.get('/user', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
+            
+    def test_user_edit_get(self):
+        """Can a user login and then see their user edit form?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            resp = client.get('/user/edit', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Profile\n\t</button>', html)
+            
+    def test_user_edit_post(self):
+        """Can a user login and then update their profile?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            updated_data = {'username': 'updatedUser', 'password': 'GreatPassword123', 'email': 'brandnew@email.com'}
+            resp = client.post('/user/edit', data=updated_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn("updatedUser", html)
+            self.assertIn("Profile successfully updated.", html)
+            
+    def test_user_edit_post_update_email(self):
+        """Can a user login and then update their profile?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            updated_data = {'username': 'JaneDoe', 'password': 'GreatPassword123', 'email': 'brandnew@email.com'}
+            resp = client.post('/user/edit', data=updated_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('JaneDoe', html)
+            self.assertIn("Profile successfully updated.", html)
+            
+    def test_user_edit_post_unauthenticated(self):
+        """Can a user login and then update their profile given they enter the wrong password?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            updated_data = {'username': 'updatedUser', 'password': 'wrongPassword', 'email': 'brandnew@email.com'}
+            resp = client.post('/user/edit', data=updated_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Profile\n\t</button>', html)
+            self.assertIn("Invalid username or password.", html)
+            
+    def test_user_edit_post_not_logged_in(self):
+        """Can a user update their profile when not logged in?"""
+        with app.test_client() as client:
+            updated_data = {'username': 'updatedUser', 'password': 'GreatPassword123', 'email': 'brandnew@email.com'}
+            resp = client.post('/user/edit', data=updated_data, follow_redirects=True)
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
