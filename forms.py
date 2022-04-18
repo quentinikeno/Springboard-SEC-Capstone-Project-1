@@ -29,6 +29,6 @@ class UserDeleteForm(FlaskForm):
     """Form for deleting users."""
     password = PasswordField('Password', validators=[DataRequired("Please enter your password to log in.")])
     confirm = SelectField('Are you sure you want to permanently delete your account?', choices=[
-        ('no', 'No'),
-        ('yes', 'Yes')
+        ('no', 'No.  On second thought, I do not want to delete my account.'),
+        ('yes', 'Yes, I would like to delete my account permanently.')
         ])

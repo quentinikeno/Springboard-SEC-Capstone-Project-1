@@ -10,7 +10,7 @@ from models import connect_db, db, User
 
 from functools import wraps
 
-from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm
+from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
 
 import asyncio
 from api_helpers import get_math_data
@@ -241,3 +241,39 @@ def user_edit():
         flash("Invalid password.  Please make sure your password is correct.", 'danger')
     
     return render_template('users/edit.html', form=form, user=g.user)
+
+@app.route('/user/delete', methods=['GET', 'POST'])
+@check_if_authorized
+def user_delete():
+    """Delete profile for current user."""
+    form = UserDeleteForm()
+    
+    if form.validate_on_submit():
+        password = form.password.data
+        confirm = form.confirm.data
+        
+        if confirm == 'no':
+            flash('Your account has not been deleted.  To delete your account please select "Yes" from the dropdown below.', "warning")                
+            return render_template('/users/delete.html', form=form, user=g.user)
+        
+        #Authenticate the user to give them permission to edit.
+        user = User.authenticate(g.user.username, password)
+        
+        if user:            
+            try:
+                do_logout()
+                db.session.delete(g.user)
+                db.session.commit()
+                
+                flash("Profile successfully deleted.", "success")
+                return redirect(url_for("index"))
+                
+            except IntegrityError:
+                db.session.rollback()
+                flash("Something went wrong.  Could not delete your account.", "danger")                
+                return render_template('/users/delete.html', form=form, user=g.user)
+            
+        flash("Invalid password.  Please make sure your password is correct.", 'danger')
+    
+    return render_template('users/delete.html', form=form, user=g.user)
+

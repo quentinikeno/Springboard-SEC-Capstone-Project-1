@@ -1,9 +1,9 @@
-{% extends './base.html' %} {% block title %} Edit User Profile {% endblock %}
+{% extends './base.html' %} {% block title %} Edit User Account {% endblock %}
 {% block content %} {% include './users/profile-card.html' %}
 <form method="post">
 	{% include './form.html' %}
 	<button class="btn btn-secondary" type="submit">
-		Apply Changes to Your Profile
+		Apply Changes to Your Account
 	</button>
 </form>
 {% endblock %}
