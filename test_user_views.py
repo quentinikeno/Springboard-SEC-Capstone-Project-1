@@ -71,9 +71,23 @@ class UserViewsTestCase(TestCase):
             
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<h1>Register Your New Account</h1>', html)
+            self.assertIn('That username is already taken by another user.  Please use a different username.', html)
             with client.session_transaction() as session:
                 self.assertIsNone(session.get('user'))
                 
+    def test_register_post_duplicate_email(self):
+        """Can a user register a new account with the same email as another user?"""
+        with app.test_client() as client:
+            data = {'username': 'test', 'password': 'testPassword', 'email': 'test@email.com'}
+            resp = client.post('/register', data=data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Register Your New Account</h1>', html)
+            self.assertIn('That email is already taken by another user.  Please use a different email address.', html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))            
+    
     def test_login_get(self):
         """Can user see the page to login?"""
         with app.test_client() as client:
