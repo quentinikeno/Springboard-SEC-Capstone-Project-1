@@ -134,16 +134,26 @@ def user_register():
             password = form.password.data
             email = form.email.data
             
+            if User.is_email_taken(email):
+                flash("That email is already taken by another user.  Please use a different email address.", 'danger')
+                return render_template('/users/register.html', form=form)
+            
+            if User.is_username_taken(username):
+                flash("That username is already taken by another user.  Please use a different username.", 'danger')
+                return render_template('/users/register.html', form=form)
+            
             new_user = User.register(username, password, email)
             db.session.add(new_user)
             db.session.commit()
-            
-            do_login(new_user)
-            
-            return redirect(url_for('user_show', username=new_user.username))
         
         except IntegrityError:
-            flash("Username already taken.", 'danger')
+            db.session.rollback()
+            flash("Username or email already taken.", 'danger')
+            return render_template('/users/register.html', form=form)
+            
+        do_login(new_user)
+            
+        return redirect(url_for('user_show', username=new_user.username))
         
     return render_template('/users/register.html', form=form)
 
