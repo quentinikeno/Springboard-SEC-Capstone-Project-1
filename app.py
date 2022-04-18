@@ -71,6 +71,7 @@ def index():
         operations = form.operations.data
         number_questions = int(form.number_questions.data)
         
+        # Do API calls with asyncio
         questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions))
         
         # Add questions to session
@@ -129,31 +130,28 @@ def user_register():
     form = UserRegisterEditForm()
     
     if form.validate_on_submit():
-        try:
-            username = form.username.data
-            password = form.password.data
-            email = form.email.data
-            
-            if User.is_email_taken(email):
-                flash("That email is already taken by another user.  Please use a different email address.", 'danger')
-                return render_template('/users/register.html', form=form)
-            
-            if User.is_username_taken(username):
-                flash("That username is already taken by another user.  Please use a different username.", 'danger')
-                return render_template('/users/register.html', form=form)
-            
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        
+        try:            
             new_user = User.register(username, password, email)
             db.session.add(new_user)
             db.session.commit()
         
         except IntegrityError:
             db.session.rollback()
-            flash("Username or email already taken.", 'danger')
+            # Check if email and username are already taken
+            if User.is_email_taken(email):
+                flash("That email is already taken by another user.  Please use a different email address.", 'danger')           
+            if User.is_username_taken(username):
+                flash("That username is already taken by another user.  Please use a different username.", 'danger')
+            
             return render_template('/users/register.html', form=form)
             
         do_login(new_user)
             
-        return redirect(url_for('user_show', username=new_user.username))
+        return redirect(url_for('user_show'))
         
     return render_template('/users/register.html', form=form)
 
@@ -161,7 +159,7 @@ def user_register():
 def login():
     """Authenticate a user."""
     if g.user:
-        return redirect(url_for('user_show', username=g.user.username))
+        return redirect(url_for('user_show'))
     
     form = UserLoginForm()
     
@@ -215,10 +213,11 @@ def user_edit():
         username = form.username.data
         email = form.email.data
         password = form.password.data
+        
         #Authenticate the user to give them permission to edit.
         user = User.authenticate(g.user.username, password)
         
-        if user:
+        if user:            
             try:
                 user.username = username
                 user.email = email
@@ -230,8 +229,15 @@ def user_edit():
                 return redirect(url_for("user_show"))
                 
             except IntegrityError:
-                flash("Username already taken.", 'danger')
-        
+                db.session.rollback()
+                # Check if email and username are already taken
+                if User.is_email_taken(email):
+                    flash("That email is already taken by another user.  Please use a different email address.", 'danger')
+                if User.is_username_taken(username):
+                    flash("That username is already taken by another user.  Please use a different username.", 'danger')
+                
+                return render_template('/users/edit.html', form=form, user=g.user)
+            
         flash("Invalid username or password.", 'danger')
     
     return render_template('users/edit.html', form=form, user=g.user)
