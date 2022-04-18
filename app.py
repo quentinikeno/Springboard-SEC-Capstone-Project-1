@@ -238,6 +238,6 @@ def user_edit():
                 
                 return render_template('/users/edit.html', form=form, user=g.user)
             
-        flash("Invalid username or password.", 'danger')
+        flash("Invalid password.  Please make sure your password is correct.", 'danger')
     
     return render_template('users/edit.html', form=form, user=g.user)

@@ -236,7 +236,7 @@ class UserViewsTestCase(TestCase):
             self.assertIn('<h1>Your Profile</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Profile\n\t</button>', html)
-            self.assertIn("Invalid username or password.", html)
+            self.assertIn("Invalid password.  Please make sure your password is correct.", html)
             
     def test_user_edit_post_not_logged_in(self):
         """Can a user update their profile when not logged in?"""
