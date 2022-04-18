@@ -225,7 +225,7 @@ def user_edit():
                 db.session.add(user)
                 db.session.commit()
                 
-                flash("Profile successfully updated.", "success")
+                flash("Account successfully updated.", "success")
                 return redirect(url_for("user_show"))
                 
             except IntegrityError:
@@ -265,7 +265,7 @@ def user_delete():
                 db.session.delete(g.user)
                 db.session.commit()
                 
-                flash("Profile successfully deleted.", "success")
+                flash("Account successfully deleted.", "success")
                 return redirect(url_for("index"))
                 
             except IntegrityError:
