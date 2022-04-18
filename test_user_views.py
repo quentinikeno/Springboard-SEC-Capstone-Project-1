@@ -59,7 +59,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             with client.session_transaction() as session:
                 self.assertIsNotNone(session['user'])
                 
@@ -106,7 +106,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             with client.session_transaction() as session:
                 self.assertEqual(session['user'], self.user.id)
                 
@@ -169,7 +169,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             
     def test_user_show_not_logged_in(self):
@@ -191,9 +191,9 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
-            self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Profile\n\t</button>', html)
+            self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Account\n\t</button>', html)
             
     def test_user_edit_post(self):
         """Can a user login and then update their profile?"""
@@ -205,9 +205,9 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn("updatedUser", html)
-            self.assertIn("Profile successfully updated.", html)
+            self.assertIn("Account successfully updated.", html)
             
     def test_user_edit_post_update_email(self):
         """Can a user login and then update their profile?"""
@@ -219,9 +219,9 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn('JaneDoe', html)
-            self.assertIn("Profile successfully updated.", html)
+            self.assertIn("Account successfully updated.", html)
             
     def test_user_edit_post_unauthenticated(self):
         """Can a user login and then update their profile given they enter the wrong password?"""
@@ -233,9 +233,9 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
-            self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Profile\n\t</button>', html)
+            self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Account\n\t</button>', html)
             self.assertIn("Invalid password.  Please make sure your password is correct.", html)
             
     def test_user_edit_post_not_logged_in(self):
@@ -259,7 +259,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('That username is already taken by another user.  Please use a different username.', html)
             
@@ -273,6 +273,75 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Profile</h1>', html)
+            self.assertIn('<h1>Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('That email is already taken by another user.  Please use a different email address.', html)
+            
+    def test_user_delete_get(self):
+        """Can a user login and then see the form delete their account?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            resp = client.get('/user/delete', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('<button class="btn btn-danger" type="submit">Delete Your Account</button>', html)
+            
+    def test_user_delete_post(self):
+        """Can a user login and delete their account?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            delete_data = {'password': 'GreatPassword123', 'confirm': 'yes'}
+            resp = client.post('/user/delete', data=delete_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Math Worksheet Generator</h1>', html)
+            self.assertIn("Account successfully deleted.", html)
+            with client.session_transaction() as session:
+                self.assertIsNone(session.get('user'))
+                
+    def test_user_unauthenticated_post(self):
+        """Can a user login and delete their account when not authenticated?"""
+        with app.test_client() as client:
+            data = {'password': 'GreatPassword123', 'confirm': 'yes'}
+            resp = client.post('/user/delete', data=data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
+            
+    def test_user_delete_post_wrong_password(self):
+        """Can a user login and delete their account when they've entered the wrong password?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            delete_data = {'password': 'Wrong Password', 'confirm': 'yes'}
+            resp = client.post('/user/delete', data=delete_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('<button class="btn btn-danger" type="submit">Delete Your Account</button>', html)
+            self.assertIn("Invalid password.  Please make sure your password is correct.", html)
+            
+    def test_user_delete_post_unconfirmed(self):
+        """Can a user login and delete their account without confirming the deletion?"""
+        with app.test_client() as client:
+            data = {'username': 'JaneDoe', 'password': 'GreatPassword123'}
+            client.post('/login', data=data, follow_redirects=True)
+            delete_data = {'password': 'GreatPassword123', 'confirm': 'no'}
+            resp = client.post('/user/delete', data=delete_data, follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(resp.status_code, 200)
+            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn("JaneDoe", html)
+            self.assertIn('<button class="btn btn-danger" type="submit">Delete Your Account</button>', html)
+            self.assertIn('Your account has not been deleted.  To delete your account please select &#34;Yes&#34; from the dropdown below.', html)
