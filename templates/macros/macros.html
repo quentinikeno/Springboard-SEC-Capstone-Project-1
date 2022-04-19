@@ -7,4 +7,27 @@
 <li class="nav-item">
 	<a class="nav-link" href="{{ url_for(endpoint) }}">{{text}}</a>
 </li>
-{% endif %} {% endmacro %}
+{% endif %} {% endmacro %} {% macro worksheet_preview_div(type, route_variable)
+%}
+<div class="col-12 col-md-6 embed-responsive">
+	<div class="worksheet-preview">
+		<div class="my-3 text-center">
+			<a
+				href="{{url_for('render_new_pdf', sheet=route_variable)}}"
+				class="btn btn-info d-none"
+				target="_blank"
+				>Open {{type}} in New Tab</a
+			>
+		</div>
+		<div>
+			<embed
+				src="{{url_for('render_new_pdf', sheet=route_variable)}}"
+				class="embed-responsive-item my-3"
+				type="application/pdf"
+				width="100%"
+				height="600px"
+			/>
+		</div>
+	</div>
+</div>
+{% endmacro %}
