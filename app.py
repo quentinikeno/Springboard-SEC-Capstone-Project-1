@@ -1,15 +1,20 @@
 import os
+
 from flask import Flask, render_template, redirect, session, request, url_for, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 from sqlalchemy.exc import IntegrityError
-from models import connect_db, db, User
-from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
+
 from functools import wraps
 import asyncio
-from api_helpers import get_math_data
+
 import boto3
 from config import S3_BUCKET, S3_KEY, S3_SECRET
+
+from models import connect_db, db, User
+from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
+from api_helpers import get_math_data
+
 
 app = Flask(__name__)
 
@@ -72,8 +77,9 @@ def index():
         # Do API calls with asyncio
         questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions))
         
-        # Add questions to session
+        # Add questions and worksheet name to session
         session['questions'] = questions
+        session['name'] = name
         
         return redirect(url_for('new_worksheet_detail'))
     
@@ -195,8 +201,11 @@ def logout():
 @check_if_authorized
 def user_show():
     """Show details for user."""
+    # Create S3 resource
     s3_resource = boto3.resource('s3')
+    # Specify the bucket
     my_bucket = s3_resource.Bucket(S3_BUCKET)
+    # Get a summary of files in bucket
     summaries = my_bucket.objects.all()
     return render_template('users/show.html', user=g.user, my_bucket=my_bucket, files=summaries)
     
@@ -278,3 +287,33 @@ def user_delete():
     
     return render_template('users/delete.html', form=form, user=g.user)
 
+###################################################################################################
+# Worksheet Routes
+###################################################################################################
+@app.route('/upload', methods=['POST'])
+@check_if_authorized
+def upload():
+    # file = request.files['file']
+    worksheet_html = render_template('worksheet.html', questions=session['questions'])
+    answer_key_html = render_template('answer-key.html', questions=session['questions'])
+    
+    worksheet_filename = f'{session.get("name")} - Worksheet.pdf'
+    answer_key_filename = f'{session.get("name")} - Answer Key.pdf'
+    worksheet_path = f'pdfs-for-upload/{worksheet_filename}'
+    answer_key_path = f'pdfs-for-upload/{answer_key_filename}'
+    
+    HTML(string=worksheet_html).write_pdf(worksheet_path)
+    HTML(string=answer_key_html).write_pdf(answer_key_path)
+    # Create new S3 s3 resource
+    s3_resource = boto3.resource('s3')
+    # Get bucket object
+    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    # Pass in file names and upload to Bucket
+    my_bucket.upload_file(worksheet_path, worksheet_filename)
+    my_bucket.upload_file(answer_key_path, answer_key_filename)
+    # Remove files from file system after upload to S3
+    os.remove(worksheet_path)
+    os.remove(answer_key_path)
+    
+    flash("Worksheet successfully saved!", "success")
+    return redirect(url_for('user_show'))

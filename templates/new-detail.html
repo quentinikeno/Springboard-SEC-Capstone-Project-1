@@ -19,5 +19,9 @@ content %}
 	worksheet_preview_div('Answer Key', 'answer-key') }}
 </div>
 
+<form action="{{ url_for('upload') }}" class="upload-form" method="POST">
+	<button class="btn btn-primary" type="submit">Upload</button>
+</form>
+
 <script src="{{ url_for('static', filename='new-detail.js') }}" defer></script>
 {% endblock %}
