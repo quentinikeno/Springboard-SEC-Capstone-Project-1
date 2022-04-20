@@ -1,2 +1,26 @@
 {% extends './base.html' %} {% block title %} User Profile {% endblock %} {%
-block content %} {% include './users/profile-card.html' %} {% endblock %}
+block content %} {% include './users/profile-card.html' %}
+<div class="container">
+	<div class="row">
+		<div class="col-12">
+			<h3>Bucket Info</h3>
+			<p>Created {{my_bucket.creation_date}}</p>
+
+			<hr />
+
+			<table class="table table-striped">
+				<tr>
+					<th>File Name</th>
+					<th>Last Modified</th>
+				</tr>
+				{% for file in files %}
+				<tr>
+					<td>{{ file.key }}</td>
+					<td>{{ file.last_modified }}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}
