@@ -1,19 +1,15 @@
 import os
-
 from flask import Flask, render_template, redirect, session, request, url_for, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
-
 from sqlalchemy.exc import IntegrityError
-
 from models import connect_db, db, User
-
-from functools import wraps
-
 from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
-
+from functools import wraps
 import asyncio
 from api_helpers import get_math_data
+import boto3
+from config import S3_BUCKET, S3_KEY, S3_SECRET
 
 app = Flask(__name__)
 
@@ -28,6 +24,8 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
+
+s3 = boto3.client('s3', aws_access_key_id=S3_KEY, aws_secret_access_key=S3_SECRET)
 
 ###################################################################################################
 # Route Decorators
@@ -197,7 +195,10 @@ def logout():
 @check_if_authorized
 def user_show():
     """Show details for user."""
-    return render_template('users/show.html', user=g.user)
+    s3_resource = boto3.resource('s3')
+    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    summaries = my_bucket.objects.all()
+    return render_template('users/show.html', user=g.user, my_bucket=my_bucket, files=summaries)
     
 @app.route('/user/edit', methods=['GET', 'POST'])
 @check_if_authorized
