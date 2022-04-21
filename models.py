@@ -85,5 +85,5 @@ class PDF(db.Model):
     def create_new_pdf(cls, user_id, filename, sheet_type):
         """Create a new instance of PDF model."""
         # Create a unique filename for S3 bucket using uuid.
-        unique_s3_filename = uuid4().hex
+        unique_s3_filename = f'{uuid4().hex}.pdf'
         return cls(user_id=user_id, unique_s3_filename=unique_s3_filename, filename=filename, sheet_type=sheet_type)
