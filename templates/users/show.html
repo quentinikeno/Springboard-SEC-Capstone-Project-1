@@ -15,7 +15,7 @@ block content %} {% include './users/profile-card.html' %}
 					<th>Delete File</th>
 					<th>Download File</th>
 				</tr>
-				{% for file in files %}
+				{% for file in files | reverse %}
 				<tr>
 					<td>{{ file.key }}</td>
 					<td>{{ file.last_modified | date_time_format }}</td>
