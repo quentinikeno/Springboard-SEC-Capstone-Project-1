@@ -8,12 +8,10 @@ from sqlalchemy.exc import IntegrityError
 from functools import wraps
 import asyncio
 
-import boto3
-from config import S3_BUCKET, S3_KEY, S3_SECRET
-
 from models import connect_db, db, User
 from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
 from api_helpers import get_math_data
+from resources import get_bucket
 
 
 app = Flask(__name__)
@@ -29,8 +27,6 @@ toolbar = DebugToolbarExtension(app)
 connect_db(app)
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
-
-s3 = boto3.client('s3', aws_access_key_id=S3_KEY, aws_secret_access_key=S3_SECRET)
 
 ###################################################################################################
 # Route Decorators
@@ -201,10 +197,8 @@ def logout():
 @check_if_authorized
 def user_show():
     """Show details for user."""
-    # Create S3 resource
-    s3_resource = boto3.resource('s3')
     # Specify the bucket
-    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    my_bucket = get_bucket()
     # Get a summary of files in bucket
     summaries = my_bucket.objects.all()
     return render_template('users/show.html', user=g.user, my_bucket=my_bucket, files=summaries)
@@ -306,10 +300,9 @@ def upload():
     
     HTML(string=worksheet_html).write_pdf(worksheet_path)
     HTML(string=answer_key_html).write_pdf(answer_key_path)
-    # Create new S3 s3 resource
-    s3_resource = boto3.resource('s3')
+
     # Get bucket object
-    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    my_bucket = get_bucket()
     # Pass in file names and upload to Bucket
     my_bucket.upload_file(worksheet_path, worksheet_filename)
     my_bucket.upload_file(answer_key_path, answer_key_filename)
@@ -326,9 +319,8 @@ def delete():
     """Delete pdf file from S3 bucket."""
     # Get the file key from hidden field in delete form.
     key = request.form['key']
-    
-    s3_resource = boto3.resource('s3')
-    my_bucket = s3_resource.Bucket(S3_BUCKET)
+
+    my_bucket = get_bucket()
     # Delete the appropriate file using the key.
     my_bucket.Object(key).delete()
     
@@ -342,8 +334,7 @@ def download():
     # Get the file key from hidden field in delete form.
     key = request.form['key']
     
-    s3_resource = boto3.resource('s3')
-    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    my_bucket = get_bucket()
     # Get file object
     file_obj = my_bucket.Object(key).get()
     
