@@ -203,10 +203,6 @@ def logout():
 @check_if_authorized
 def user_show():
     """Show details for user."""
-    # # Specify the bucket
-    # my_bucket = get_bucket()
-    # # Get a summary of files in bucket
-    # summaries = my_bucket.objects.all()
     return render_template('users/show.html', user=g.user, files=g.user.pdfs)
     
 @app.route('/user/edit', methods=['GET', 'POST'])
@@ -301,22 +297,22 @@ def upload():
     worksheet_html = render_template('worksheet.html', questions=session['questions'])
     answer_key_html = render_template('answer-key.html', questions=session['questions'])
     
-    worksheet_filename = f'{session.get("name")} - Worksheet.pdf'
-    answer_key_filename = f'{session.get("name")} - Answer Key.pdf'
+    new_worksheet = PDF.create_new_pdf(user_id=user.id, filename=f'{session.get("name")} - Worksheet.pdf', sheet_type='worksheet')
+    new_answer_key = PDF.create_new_pdf(user_id=user.id, filename=f'{session.get("name")} - Answer Key.pdf', sheet_type='answer key')
+    
+    worksheet_filename = new_worksheet.unique_s3_filename
+    answer_key_filename = new_answer_key.unique_s3_filename
     worksheet_path = f'pdfs-for-upload/{worksheet_filename}'
     answer_key_path = f'pdfs-for-upload/{answer_key_filename}'
     
     HTML(string=worksheet_html).write_pdf(worksheet_path)
     HTML(string=answer_key_html).write_pdf(answer_key_path)
-    
-    new_worksheet = PDF.create_new_pdf(user_id=user.id, filename=worksheet_filename, sheet_type='worksheet')
-    new_answer_key = PDF.create_new_pdf(user_id=user.id, filename=answer_key_filename, sheet_type='answer key')
 
     # Get bucket object
     my_bucket = get_bucket()
     # Pass in file names and upload to Bucket
-    my_bucket.upload_file(worksheet_path, new_worksheet.unique_s3_filename)
-    my_bucket.upload_file(answer_key_path, new_answer_key.unique_s3_filename)
+    my_bucket.upload_file(worksheet_path, worksheet_filename)
+    my_bucket.upload_file(answer_key_path, answer_key_filename)
     # Remove files from file system after upload to S3
     os.remove(worksheet_path)
     os.remove(answer_key_path)
