@@ -12,8 +12,8 @@ block content %} {% include './users/profile-card.html' %}
 				<tr>
 					<th>File Name</th>
 					<th>Created</th>
-					<th>Delete File</th>
 					<th>Download File</th>
+					<th>Delete File</th>
 				</tr>
 				{% for file in files | sort(attribute='timestamp', reverse =
 				True) %}
