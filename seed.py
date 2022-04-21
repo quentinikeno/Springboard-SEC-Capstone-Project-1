@@ -1,4 +1,4 @@
-from models import db, User
+from models import db, User, PDF
 from app import app
 
 db.drop_all()
