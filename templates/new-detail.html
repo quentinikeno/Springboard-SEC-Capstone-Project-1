@@ -20,6 +20,7 @@ content %}
 </div>
 
 <form action="{{ url_for('upload') }}" class="upload-form" method="POST">
+	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
 	<button class="btn btn-primary" type="submit">Upload</button>
 </form>
 

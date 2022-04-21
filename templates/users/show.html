@@ -30,6 +30,11 @@ block content %} {% include './users/profile-card.html' %}
 								name="key"
 								value="{{ file.key }}"
 							/>
+							<input
+								type="hidden"
+								name="csrf_token"
+								value="{{ csrf_token() }}"
+							/>
 							<button type="submit" class="btn btn-danger btn-sm">
 								<i class="fa-solid fa-trash"></i>
 							</button>
@@ -46,13 +51,17 @@ block content %} {% include './users/profile-card.html' %}
 								name="key"
 								value="{{ file.key }}"
 							/>
+							<input
+								type="hidden"
+								name="csrf_token"
+								value="{{ csrf_token() }}"
+							/>
 							<button type="submit" class="btn btn-info btn-sm">
 								<i class="fa-solid fa-file-arrow-down"></i>
 							</button>
 						</form>
 					</td>
 				</tr>
-
 				{% endfor %}
 			</table>
 			{% else %}
@@ -64,4 +73,5 @@ block content %} {% include './users/profile-card.html' %}
 		</div>
 	</div>
 </div>
+<script src="{{ url_for('static', filename='users-show.js') }}" defer></script>
 {% endblock %}

@@ -4,6 +4,7 @@ from flask import Flask, render_template, redirect, session, request, Response, 
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 from sqlalchemy.exc import IntegrityError
+from flask_wtf.csrf import CSRFProtect
 
 from functools import wraps
 import asyncio
@@ -26,6 +27,8 @@ app.config["SQLALCHEMY_ECHO"] = True
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
+
+csrf = CSRFProtect(app)
 
 app.jinja_env.filters['date_time_format'] = date_time_format
 
