@@ -9,7 +9,7 @@ from flask_wtf.csrf import CSRFProtect
 from functools import wraps
 import asyncio
 
-from models import connect_db, db, User
+from models import connect_db, db, User, PDF
 from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
 from api_helpers import get_math_data
 from resources import get_bucket
@@ -203,11 +203,11 @@ def logout():
 @check_if_authorized
 def user_show():
     """Show details for user."""
-    # Specify the bucket
-    my_bucket = get_bucket()
-    # Get a summary of files in bucket
-    summaries = my_bucket.objects.all()
-    return render_template('users/show.html', user=g.user, my_bucket=my_bucket, files=summaries)
+    # # Specify the bucket
+    # my_bucket = get_bucket()
+    # # Get a summary of files in bucket
+    # summaries = my_bucket.objects.all()
+    return render_template('users/show.html', user=g.user, files=g.user.pdfs)
     
 @app.route('/user/edit', methods=['GET', 'POST'])
 @check_if_authorized
@@ -291,10 +291,12 @@ def user_delete():
 # Worksheet Routes
 ###################################################################################################
 @app.route('/upload', methods=['POST'])
-@check_if_authorized
 @check_session_questions
+@check_if_authorized
 def upload():
     """Upload worksheet and answer key to S3 bucket."""
+    
+    user = User.query.get(session['user'])
     
     worksheet_html = render_template('worksheet.html', questions=session['questions'])
     answer_key_html = render_template('answer-key.html', questions=session['questions'])
@@ -306,17 +308,24 @@ def upload():
     
     HTML(string=worksheet_html).write_pdf(worksheet_path)
     HTML(string=answer_key_html).write_pdf(answer_key_path)
+    
+    new_worksheet = PDF.create_new_pdf(user_id=user.id, filename=worksheet_filename, sheet_type='worksheet')
+    new_answer_key = PDF.create_new_pdf(user_id=user.id, filename=answer_key_filename, sheet_type='answer key')
 
     # Get bucket object
     my_bucket = get_bucket()
     # Pass in file names and upload to Bucket
-    my_bucket.upload_file(worksheet_path, worksheet_filename)
-    my_bucket.upload_file(answer_key_path, answer_key_filename)
+    my_bucket.upload_file(worksheet_path, new_worksheet.unique_s3_filename)
+    my_bucket.upload_file(answer_key_path, new_answer_key.unique_s3_filename)
     # Remove files from file system after upload to S3
     os.remove(worksheet_path)
     os.remove(answer_key_path)
     
-    flash("Worksheet successfully saved!", "success")
+    # Save worksheet metadata to db.
+    db.session.add_all([new_worksheet, new_answer_key])
+    db.session.commit()
+    
+    flash("Worksheet and answer key successfully saved!", "success")
     return redirect(url_for('user_show'))
 
 @app.route('/delete', methods=['POST'])
@@ -330,6 +339,11 @@ def delete():
     # Delete the appropriate file using the key.
     my_bucket.Object(key).delete()
     
+    # Delete worksheet metadata from db.
+    pdf = PDF.query.filter( (PDF.user_id == g.user.id) & (PDF.unique_s3_filename == key)).first()
+    db.session.delete(pdf)
+    db.session.commit()
+    
     flash('File deleted successfully.', 'success')
     return redirect(url_for('user_show'))
 
@@ -337,8 +351,9 @@ def delete():
 @check_if_authorized
 def download():
     """Download pdf file from S3 bucket."""
-    # Get the file key from hidden field in delete form.
+    # Get the file key and filename from hidden field in delete form.
     key = request.form['key']
+    filename = request.form['filename']
     
     my_bucket = get_bucket()
     # Get file object
@@ -347,5 +362,5 @@ def download():
     return Response(
         file_obj['Body'].read(), 
         mimetype='application/pdf', 
-        headers={"Content-Disposition": f'attachment; filename="{format(key)}"'}
+        headers={"Content-Disposition": f'attachment; filename="{format(filename)}"'}
         )

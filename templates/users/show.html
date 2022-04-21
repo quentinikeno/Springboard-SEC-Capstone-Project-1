@@ -15,10 +15,11 @@ block content %} {% include './users/profile-card.html' %}
 					<th>Delete File</th>
 					<th>Download File</th>
 				</tr>
-				{% for file in files | reverse %}
+				{% for file in files | sort(attribute='timestamp', reverse =
+				True) %}
 				<tr>
-					<td>{{ file.key }}</td>
-					<td>{{ file.last_modified | date_time_format }}</td>
+					<td>{{ file.filename }}</td>
+					<td>{{ file.timestamp | date_time_format }}</td>
 					<td>
 						<form
 							class="delete-form"
@@ -28,7 +29,7 @@ block content %} {% include './users/profile-card.html' %}
 							<input
 								type="hidden"
 								name="key"
-								value="{{ file.key }}"
+								value="{{ file.unique_s3_filename }}"
 							/>
 							<input
 								type="hidden"
@@ -49,7 +50,12 @@ block content %} {% include './users/profile-card.html' %}
 							<input
 								type="hidden"
 								name="key"
-								value="{{ file.key }}"
+								value="{{ file.unique_s3_filename }}"
+							/>
+							<input
+								type="hidden"
+								name="filename"
+								value="{{ file.filename }}"
 							/>
 							<input
 								type="hidden"
