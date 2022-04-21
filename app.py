@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, render_template, redirect, session, request, url_for, flash, g
+from flask import Flask, render_template, redirect, session, request, Response, url_for, flash, g
 from flask_debugtoolbar import DebugToolbarExtension
 from flask_weasyprint import HTML, render_pdf
 from sqlalchemy.exc import IntegrityError
@@ -292,8 +292,10 @@ def user_delete():
 ###################################################################################################
 @app.route('/upload', methods=['POST'])
 @check_if_authorized
+@check_session_questions
 def upload():
-    # file = request.files['file']
+    """Upload worksheet and answer key to S3 bucket."""
+    
     worksheet_html = render_template('worksheet.html', questions=session['questions'])
     answer_key_html = render_template('answer-key.html', questions=session['questions'])
     
@@ -317,3 +319,36 @@ def upload():
     
     flash("Worksheet successfully saved!", "success")
     return redirect(url_for('user_show'))
+
+@app.route('/delete', methods=['POST'])
+@check_if_authorized
+def delete():
+    """Delete pdf file from S3 bucket."""
+    # Get the file key from hidden field in delete form.
+    key = request.form['key']
+    
+    s3_resource = boto3.resource('s3')
+    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    # Delete the appropriate file using the key.
+    my_bucket.Object(key).delete()
+    
+    flash('File deleted successfully.', 'success')
+    return redirect(url_for('user_show'))
+
+@app.route('/download', methods=['POST'])
+@check_if_authorized
+def download():
+    """Download pdf file from S3 bucket."""
+    # Get the file key from hidden field in delete form.
+    key = request.form['key']
+    
+    s3_resource = boto3.resource('s3')
+    my_bucket = s3_resource.Bucket(S3_BUCKET)
+    # Get file object
+    file_obj = my_bucket.Object(key).get()
+    
+    return Response(
+        file_obj['Body'].read(), 
+        mimetype='application/pdf', 
+        headers={"Content-Disposition": f'attachment; filename="{format(key)}"'}
+        )
