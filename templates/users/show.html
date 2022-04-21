@@ -20,27 +20,7 @@ block content %} {% include './users/profile-card.html' %}
 				<tr>
 					<td>{{ file.filename }}</td>
 					<td>{{ file.timestamp | date_time_format }}</td>
-					<td>
-						<form
-							class="delete-form"
-							action="{{ url_for('delete') }}"
-							method="post"
-						>
-							<input
-								type="hidden"
-								name="key"
-								value="{{ file.unique_s3_filename }}"
-							/>
-							<input
-								type="hidden"
-								name="csrf_token"
-								value="{{ csrf_token() }}"
-							/>
-							<button type="submit" class="btn btn-danger btn-sm">
-								<i class="fa-solid fa-trash"></i>
-							</button>
-						</form>
-					</td>
+
 					<td>
 						<form
 							class="download-form"
@@ -64,6 +44,27 @@ block content %} {% include './users/profile-card.html' %}
 							/>
 							<button type="submit" class="btn btn-info btn-sm">
 								<i class="fa-solid fa-file-arrow-down"></i>
+							</button>
+						</form>
+					</td>
+					<td>
+						<form
+							class="delete-form"
+							action="{{ url_for('delete') }}"
+							method="post"
+						>
+							<input
+								type="hidden"
+								name="key"
+								value="{{ file.unique_s3_filename }}"
+							/>
+							<input
+								type="hidden"
+								name="csrf_token"
+								value="{{ csrf_token() }}"
+							/>
+							<button type="submit" class="btn btn-danger btn-sm">
+								<i class="fa-solid fa-trash"></i>
 							</button>
 						</form>
 					</td>
