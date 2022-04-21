@@ -284,7 +284,7 @@ def user_delete():
     return render_template('users/delete.html', form=form, user=g.user)
 
 ###################################################################################################
-# Worksheet Routes
+# Worksheet S3 Cloud Storage Routes
 ###################################################################################################
 @app.route('/upload', methods=['POST'])
 @check_session_questions
@@ -360,3 +360,11 @@ def download():
         mimetype='application/pdf', 
         headers={"Content-Disposition": f'attachment; filename="{format(filename)}"'}
         )
+    
+###################################################################################################
+# 404 Route
+###################################################################################################
+@app.errorhandler(404)
+def not_found(e):
+    """Render to 404 error page."""
+    return render_template('404.html',)
