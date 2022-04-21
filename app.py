@@ -12,6 +12,7 @@ from models import connect_db, db, User
 from forms import CreateWorksheetForm, UserRegisterEditForm, UserLoginForm, UserDeleteForm
 from api_helpers import get_math_data
 from resources import get_bucket
+from filters import date_time_format
 
 
 app = Flask(__name__)
@@ -25,6 +26,8 @@ app.config["SQLALCHEMY_ECHO"] = True
 toolbar = DebugToolbarExtension(app)
 
 connect_db(app)
+
+app.jinja_env.filters['date_time_format'] = date_time_format
 
 X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
 

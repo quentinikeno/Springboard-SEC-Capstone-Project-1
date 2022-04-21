@@ -3,11 +3,11 @@ block content %} {% include './users/profile-card.html' %}
 <div class="container">
 	<div class="row">
 		<div class="col-12">
-			<h3>Bucket Info</h3>
-			<p>Created {{my_bucket.creation_date}}</p>
+			<h3>Your Saved Worksheets</h3>
 
 			<hr />
 
+			{% if files %}
 			<table class="table table-striped">
 				<tr>
 					<th>File Name</th>
@@ -18,7 +18,7 @@ block content %} {% include './users/profile-card.html' %}
 				{% for file in files %}
 				<tr>
 					<td>{{ file.key }}</td>
-					<td>{{ file.last_modified }}</td>
+					<td>{{ file.last_modified | date_time_format }}</td>
 					<td>
 						<form
 							class="delete-form"
@@ -55,6 +55,12 @@ block content %} {% include './users/profile-card.html' %}
 
 				{% endfor %}
 			</table>
+			{% else %}
+			<p>
+				No worksheets have been saved yet. Create a new one
+				<a href="{{ url_for('index') }}">here</a>
+			</p>
+			{% endif %}
 		</div>
 	</div>
 </div>
