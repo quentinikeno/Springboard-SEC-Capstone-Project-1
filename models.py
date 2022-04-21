@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from uuid import uuid4
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -23,6 +25,8 @@ class User(db.Model):
     password = db.Column(db.Text, nullable=False)
     
     email = db.Column(db.String(50), nullable=False, unique=True)
+    
+    pdfs = db.relationship('PDF')
     
     def __repr__(self):
         """Representation of User."""
@@ -55,3 +59,31 @@ class User(db.Model):
     def is_email_taken(cls, email):
         """Check if a email is taken.  Returns a user with a given email if one exists, else returns None."""
         return User.query.filter_by(email=email).first()
+    
+class PDF(db.Model):
+    """Worksheet and Answer Key File Model."""
+    
+    __tablename__ = 'pdfs'
+    
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    
+    unique_s3_filename = db.Column(db.String, unique=True, nullable=False)
+    
+    filename = db.Column(db.String, nullable=False)
+    
+    sheet_type = db.Column(db.String, nullable=False)
+    
+    timestamp = db.Column(db.DateTime, nullable=False, default=datetime.utcnow())
+    
+    def __repr__(self):
+        """Representation of PDF file."""
+        return f"<PDF id={self.id} user_id={self.user_id} unique_s3_filename={self.unique_s3_filename} filename={self.filename}>"
+    
+    @classmethod
+    def create_new_pdf(cls, user_id, filename, sheet_type):
+        """Create a new instance of PDF model."""
+        # Create a unique filename for S3 bucket using uuid.
+        unique_s3_filename = uuid4().hex
+        return cls(user_id=user_id, unique_s3_filename=unique_s3_filename, filename=filename, sheet_type=sheet_type)
