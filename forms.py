@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, IntegerRangeField, EmailField
-from wtforms.validators import DataRequired, Email, Length, NumberRange
+from wtforms import StringField, PasswordField, SelectField, IntegerRangeField, EmailField, IntegerField, BooleanField
+from wtforms.validators import DataRequired, InputRequired, Email, Length, NumberRange
 
 class CreateWorksheetForm(FlaskForm):
     """Form for creating a new Worksheet."""
@@ -13,6 +13,9 @@ class CreateWorksheetForm(FlaskForm):
         ('div', 'Division'), 
         ])
     number_questions = IntegerRangeField('Number of Questions', validators=[NumberRange(min=5, max=30)])
+    minimum = IntegerField('Number Minimum', validators=[InputRequired("Please enter a minimum number.")])
+    maximum = IntegerField('Number Maximum', validators=[InputRequired("Please enter a maximum number.")])
+    allow_negative = BooleanField('Allow Negative Results for Subtraction')
     
 class UserRegisterEditForm(FlaskForm):
     """Form for signing up and registering users."""
