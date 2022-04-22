@@ -71,13 +71,27 @@ def index():
     """Show form to allow users to specify parameters for their worksheet.  Use the form data to call X-Math API to get math problems."""
     form = CreateWorksheetForm()
     
+    if request.method == 'GET':
+        form.minimum.data = 0
+        form.maximum.data = 100
+    
     if form.validate_on_submit():
         name = form.name.data
         operations = form.operations.data
         number_questions = int(form.number_questions.data)
+        minimum = form.minimum.data
+        maximum = form.maximum.data
+        allow_negative = form.allow_negative.data
+        
+        # params for API get request
+        params = dict()
+        params["max"] = maximum
+        params["min"] = minimum
+        if allow_negative:
+            params["negative"] = 1
         
         # Do API calls with asyncio
-        questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions))
+        questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions, params))
         
         # Add questions and worksheet name to session
         session['questions'] = questions
