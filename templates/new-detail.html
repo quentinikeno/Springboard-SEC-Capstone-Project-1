@@ -21,7 +21,9 @@ content %}
 
 <form action="{{ url_for('upload') }}" class="upload-form" method="POST">
 	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-	<button class="btn btn-primary" type="submit">Upload</button>
+	<button class="btn btn-primary" type="submit">
+		Save Worksheet and Answer Key
+	</button>
 </form>
 
 <script src="{{ url_for('static', filename='new-detail.js') }}" defer></script>
