@@ -16,7 +16,7 @@ app.config['WTF_CSRF_ENABLED'] = False
 class WorksheetViewsTestCase(TestCase):
     """Test views for worksheets."""
         
-    def test_route_route(self):
+    def test_root_route(self):
         """Testing the route route."""
         with app.test_client() as client:
             resp = client.get("/")
@@ -25,10 +25,10 @@ class WorksheetViewsTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<h1>Math Worksheet Generator</h1>', html)
             
-    def test_route_post_route(self):
+    def test_root_post_route(self):
         """Testing submitting the form to create a new worksheet on the root route."""
         with app.test_client() as client:
-            data = {'name': 'Test', 'operations': 'random', 'number_questions': 20}
+            data = {'name': 'Test', 'operations': 'random', 'number_questions': 20, 'minimum': 0, 'maximum': 10, 'allow_negative': True}
             resp = client.post('/', data=data, follow_redirects=True)
             html = resp.get_data(as_text=True)
             
