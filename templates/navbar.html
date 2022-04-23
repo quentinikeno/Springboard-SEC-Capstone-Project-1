@@ -20,6 +20,7 @@
 			{% if session.get('user') %} {{ nav_link('user_show', 'My
 			Worksheets') }}
 			<form
+				id="logout-form"
 				class="navbar-form px-3 py-2"
 				action="{{ url_for('logout') }}"
 				method="post"

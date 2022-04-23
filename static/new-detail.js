@@ -8,11 +8,11 @@ $(window).on("load", () => {
 });
 
 // On submit, disable the form submission button and show a loading spinner.
-$("form").on("submit", function () {
+$(".upload-form").on("submit", function () {
 	buttonLoading = $(
 		'<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>'
 	);
-	submitButton = $("form button");
+	submitButton = $(".upload-form button");
 	submitButton
 		.text("Loading...  ")
 		.append(buttonLoading)
