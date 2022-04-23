@@ -14,6 +14,7 @@ block content %} {% include './users/profile-card.html' %}
 				<tr>
 					<th>File Name</th>
 					<th>Created</th>
+					<th>Type</th>
 					<th>Download File</th>
 					<th>Delete File</th>
 				</tr>
@@ -21,8 +22,10 @@ block content %} {% include './users/profile-card.html' %}
 				True) %}
 				<tr>
 					<td>{{ file.filename }}</td>
-					<td>{{ file.timestamp | date_time_format }}</td>
-
+					<td>
+						{{ file.timestamp | date_time_format | capitalize }}
+					</td>
+					<td>{{ file.sheet_type | title }}</td>
 					<td>
 						<form
 							class="download-form"
@@ -45,6 +48,7 @@ block content %} {% include './users/profile-card.html' %}
 								value="{{ csrf_token() }}"
 							/>
 							<button type="submit" class="btn btn-info btn-sm">
+								Download
 								<i class="fa-solid fa-file-arrow-down"></i>
 							</button>
 						</form>
@@ -66,7 +70,7 @@ block content %} {% include './users/profile-card.html' %}
 								value="{{ csrf_token() }}"
 							/>
 							<button type="submit" class="btn btn-danger btn-sm">
-								<i class="fa-solid fa-trash"></i>
+								Delete <i class="fa-solid fa-trash"></i>
 							</button>
 						</form>
 					</td>
