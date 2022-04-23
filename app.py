@@ -147,6 +147,9 @@ def do_logout():
 @app.route('/register', methods=['GET', 'POST'])
 def user_register():
     """Show form to register new user."""
+    if g.user:
+        return redirect(url_for('user_show'))
+    
     form = UserRegisterEditForm()
     
     if form.validate_on_submit():
