@@ -63,7 +63,6 @@ class UserModelTestCase(TestCase):
         
         with self.assertRaises(IntegrityError):
             db.session.commit()
-
             
     def test_user_register_nullable_fields(self):
         """Test if User.register fails to create a new user given non-nullable fields not provided."""
@@ -85,3 +84,23 @@ class UserModelTestCase(TestCase):
         """Test if User.authenticate fails to return a user when given an invalid password."""
         auth_user = User.authenticate("JaneDoe", "WrongPassword123")
         self.assertFalse(auth_user)
+        
+    def test_is_username_taken(self):
+        """Test is_username_taken class method when username is taken."""
+        user = User.is_username_taken("JaneDoe")
+        self.assertEqual(user, self.user)
+        
+    def test_is_username_taken_none(self):
+        """Test is_username_taken class method when username is not taken."""
+        user = User.is_username_taken("newUser")
+        self.assertIsNone(user)
+        
+    def test_is_email_taken(self):
+        """Test is_email_taken class method when email is taken."""
+        user = User.is_email_taken("test@email.com")
+        self.assertEqual(user, self.user)
+        
+    def test_is_email_taken_none(self):
+        """Test is_email_taken class method when email is not taken."""
+        user = User.is_email_taken("brandNew@email.com")
+        self.assertIsNone(user)
