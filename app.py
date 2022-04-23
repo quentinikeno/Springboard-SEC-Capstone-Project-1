@@ -303,16 +303,19 @@ def user_delete():
 ###################################################################################################
 # Worksheet S3 Cloud Storage Routes
 ###################################################################################################
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 @check_session_questions
 @check_if_authorized
 def upload():
     """Upload worksheet and answer key to S3 bucket."""
     
+    if request.method == 'GET':
+        return redirect(url_for('new_worksheet_detail'))
+    
     user = User.query.get(session['user'])
     
-    worksheet_html = render_template('worksheet.html', questions=session['questions'])
-    answer_key_html = render_template('answer-key.html', questions=session['questions'])
+    worksheet_html = render_template('worksheet.html', questions=session['questions'], render=True)
+    answer_key_html = render_template('answer-key.html', questions=session['questions'], render=True)
     
     new_worksheet = PDF.create_new_pdf(user_id=user.id, filename=f'{session.get("name")} - Worksheet.pdf', sheet_type='worksheet')
     new_answer_key = PDF.create_new_pdf(user_id=user.id, filename=f'{session.get("name")} - Answer Key.pdf', sheet_type='answer key')

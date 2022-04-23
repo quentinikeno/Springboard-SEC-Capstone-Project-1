@@ -43,6 +43,9 @@
 		<title>{% block title %} {% endblock %}</title>
 	</head>
 	<body>
+		{% if not request.endpoint.endswith('render_new_pdf') and not
+		request.endpoint.endswith('upload') %} {% include 'navbar.html' %} {%
+		endif %}
 		<main class="my-5 container">
 			{% for category, msg in get_flashed_messages(with_categories=true)
 			%}
