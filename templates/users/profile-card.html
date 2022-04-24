@@ -1,11 +1,11 @@
-{% from "./macros/macros.html" import nav_link with context %}
+{% from "./macros/macros.html" import card_nav_link with context %}
 <h1 class="text-center">Your Account</h1>
 <div class="card text-center my-4 mx-auto col-12 col-md-8 col=lg-6">
-	<div class="card-header">
+	<div class="card-header bg-dark">
 		<ul class="nav nav-pills card-header-pills nav-fill">
-			{{ nav_link('user_show', 'Your Worksheets') }} {{
-			nav_link('user_edit', 'Edit Your Account') }} {{
-			nav_link('user_delete', 'Delete Your Account') }}
+			{{ card_nav_link('user_show', 'Your Worksheets') }} {{
+			card_nav_link('user_edit', 'Edit Your Account') }} {{
+			card_nav_link('user_delete', 'Delete Your Account') }}
 		</ul>
 	</div>
 	<div class="card-body text-light">

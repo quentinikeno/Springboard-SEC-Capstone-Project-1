@@ -1,11 +1,11 @@
-{% macro nav_link(endpoint, text) %} {% if request.endpoint.endswith(endpoint)
-%}
+{% macro card_nav_link(endpoint, text) %} {% if
+request.endpoint.endswith(endpoint) %}
 <li class="nav-item">
 	<a class="nav-link active" href="{{ url_for(endpoint) }}">{{text}}</a>
 </li>
 {% else %}
 <li class="nav-item">
-	<a class="nav-link" href="{{ url_for(endpoint) }}">{{text}}</a>
+	<a class="nav-link link-light" href="{{ url_for(endpoint) }}">{{text}}</a>
 </li>
 {% endif %} {% endmacro %} {% macro worksheet_link_div(type, route_variable) %}
 <div class="new-tab-links text-center col-12 col-lg-6 my-3">
