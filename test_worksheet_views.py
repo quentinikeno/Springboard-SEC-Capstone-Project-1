@@ -86,3 +86,19 @@ class WorksheetViewsTestCase(TestCase):
             
             self.assertEqual(resp.status_code, 200)
             self.assertIn('Please generate a new worksheet before accessing that page.', html)
+            
+    def test_404_page(self):
+        """Test 404 page."""
+        with app.test_client() as client:
+            resp = client.get('/badroute404')
+            
+            self.assertEqual(404, resp.status_code)
+            
+    def test_404_page(self):
+        """Test 404 page redirect."""
+        with app.test_client() as client:
+            resp = client.get('/badroute404', follow_redirects=True)
+            html = resp.get_data(as_text=True)
+            
+            self.assertEqual(200, resp.status_code)
+            self.assertIn('<h1>The page you are looking for does not exist!</h1>', html)
