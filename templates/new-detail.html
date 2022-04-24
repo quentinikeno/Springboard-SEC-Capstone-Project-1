@@ -2,7 +2,26 @@
 'base.html' %} {% block title %} Your New Worksheet! {% endblock %} {% block
 content %}
 
-<h1>Generated Worksheet</h1>
+<h1 class="text-center">Generated Worksheet</h1>
+
+<hr />
+
+<div class="my-3 text-center">
+	<form
+		action="{{ url_for('upload') }}"
+		class="upload-form text-center my-3"
+		method="POST"
+	>
+		<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+		<button class="btn btn-primary" type="submit">
+			Save Worksheet and Answer Key
+			<i class="fa-solid fa-floppy-disk mx-2"></i>
+		</button>
+	</form>
+	<a href="{{ url_for('index') }}" class="btn btn-warning"
+		>Generate a new worksheet.</a
+	>
+</div>
 
 <div class="row">
 	<div class="spinner-loading-div my-5">
@@ -18,13 +37,6 @@ content %}
 	{{ worksheet_preview_div('Worksheet', 'worksheet') }} {{
 	worksheet_preview_div('Answer Key', 'answer-key') }}
 </div>
-
-<form action="{{ url_for('upload') }}" class="upload-form" method="POST">
-	<input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-	<button class="btn btn-primary" type="submit">
-		Save Worksheet and Answer Key
-	</button>
-</form>
 
 <script src="{{ url_for('static', filename='new-detail.js') }}" defer></script>
 {% endblock %}
