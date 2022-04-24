@@ -173,8 +173,11 @@ def user_register():
             return render_template('/users/register.html', form=form)
             
         do_login(new_user)
-            
-        return redirect(url_for('user_show'))
+        
+        if 'wants_url' in session:
+            return redirect(session['wants_url'])
+        else:            
+            return redirect(url_for('user_show'))
         
     return render_template('/users/register.html', form=form)
 
