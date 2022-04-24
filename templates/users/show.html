@@ -8,16 +8,14 @@ block content %} {% include './users/profile-card.html' %}
 			<hr />
 
 			{% if files %}
-			<table
-				class="table table-striped table-responsive table-hover table-bordered align-middle"
-			>
-				<tr>
+			<table class="table table-responsive table-hover align-middle">
+				<thead class="table-dark">
 					<th>File Name</th>
 					<th>Created</th>
 					<th>Type</th>
 					<th>Download File</th>
 					<th>Delete File</th>
-				</tr>
+				</thead>
 				{% for file in files | sort(attribute='timestamp', reverse =
 				True) %}
 				<tr>
