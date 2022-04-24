@@ -34,7 +34,7 @@
 	</div>
 </div>
 
-{% endmacro %} {% macro nav_link(endpoint, text) %} {% if
+{% endmacro %} {% macro nav_link(endpoint, text) %} {% if request.endpoint and
 request.endpoint.endswith(endpoint) %}
 <a class="nav-item nav-link active p-3" href="#"
 	>{{ text }} <span class="sr-only">(current)</span></a

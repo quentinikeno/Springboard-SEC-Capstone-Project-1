@@ -12,12 +12,13 @@ body {
 	bottom: 0;
 }
 
-#jumbotron {
+#jumbotron,
+.card-body {
 	font-family: "Coming Soon", cursive;
 	background-color: #497959;
 	border: solid 1rem #e7b476;
 }
 
-#jumbotron > h1 {
+:is(#jumbotron, .card-body) :is(h1, h2, h3, h4, h5, h6) {
 	font-family: "Coming Soon", cursive;
 }

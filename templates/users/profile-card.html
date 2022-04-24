@@ -8,7 +8,7 @@
 			nav_link('user_delete', 'Delete Your Account') }}
 		</ul>
 	</div>
-	<div class="card-body">
+	<div class="card-body text-light">
 		<div class="row">
 			<div
 				class="col-12 col-sm-6 d-flex flex-column justify-content-around"
@@ -17,7 +17,7 @@
 				<h5 class="card-title mt-3">{{user.username}}</h5>
 			</div>
 			<div class="col-12 col-sm-6">
-				<p class="lead text-muted">Worksheets/Answer Keys Saved:</p>
+				<p class="lead text-light">Worksheets/Answer Keys Saved:</p>
 				<h2 class="display-1">{{ user.pdfs | length }}</h2>
 			</div>
 		</div>
