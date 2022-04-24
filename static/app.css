@@ -7,6 +7,11 @@ body {
 	color: red;
 }
 
+.footer {
+	position: fixed;
+	bottom: 0;
+}
+
 #jumbotron {
 	font-family: "Coming Soon", cursive;
 	background-color: #497959;
