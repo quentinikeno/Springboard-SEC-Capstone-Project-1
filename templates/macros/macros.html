@@ -7,22 +7,23 @@
 <li class="nav-item">
 	<a class="nav-link" href="{{ url_for(endpoint) }}">{{text}}</a>
 </li>
-{% endif %} {% endmacro %} {% macro worksheet_preview_div(type, route_variable)
-%}
-<div class="col-12 col-md-6 embed-responsive h-100">
+{% endif %} {% endmacro %} {% macro worksheet_link_div(type, route_variable) %}
+<div class="new-tab-links text-center col-12 col-lg-6 my-3">
+	<a
+		href="{{url_for('render_new_pdf', sheet=route_variable)}}"
+		class="btn btn-info d-none h-100"
+		target="_blank"
+		>Open {{type}} in New Tab</a
+	>
+</div>
+{% endmacro %} {% macro worksheet_preview_div(type, route_variable) %}
+
+<div class="col-12 col-lg-6 embed-responsive h-100">
 	<div class="worksheet-preview h-100">
-		<div class="my-3 text-center">
-			<a
-				href="{{url_for('render_new_pdf', sheet=route_variable)}}"
-				class="btn btn-info d-none"
-				target="_blank"
-				>Open {{type}} in New Tab</a
-			>
-		</div>
 		<div class="h-100">
 			<object
 				data="{{url_for('render_new_pdf', sheet=route_variable)}}"
-				class="embed-responsive-item my-3 w-100 h-100"
+				class="embed-responsive-item w-100 h-100"
 				type="application/pdf"
 			>
 				The PDF preview is not available on your device. Please click

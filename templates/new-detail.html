@@ -1,6 +1,6 @@
-{% from '/macros/macros.html' import worksheet_preview_div %} {% extends
-'base.html' %} {% block title %} Your New Worksheet! {% endblock %} {% block
-content %}
+{% from '/macros/macros.html' import worksheet_preview_div, worksheet_link_div
+%} {% extends 'base.html' %} {% block title %} Your New Worksheet! {% endblock
+%} {% block content %}
 
 <h1 class="text-center">Generated Worksheet</h1>
 
@@ -23,7 +23,7 @@ content %}
 	>
 </div>
 
-<div class="row h-100">
+<div class="h-100">
 	<div class="spinner-loading-div my-5">
 		<div class="d-flex align-items-center justify-content-around">
 			<strong>Loading...</strong>
@@ -34,8 +34,14 @@ content %}
 			></div>
 		</div>
 	</div>
-	{{ worksheet_preview_div('Worksheet', 'worksheet') }} {{
-	worksheet_preview_div('Answer Key', 'answer-key') }}
+	<div class="row">
+		{{ worksheet_link_div('Worksheet', 'worksheet') }} {{
+		worksheet_link_div('Answer Key', 'answer-key') }}
+	</div>
+	<div class="row h-100">
+		{{ worksheet_preview_div('Worksheet', 'worksheet') }} {{
+		worksheet_preview_div('Answer Key', 'answer-key') }}
+	</div>
 </div>
 
 <script src="{{ url_for('static', filename='new-detail.js') }}" defer></script>
