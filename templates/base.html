@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 	<head>
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -52,9 +52,9 @@
 		></script>
 		<title>{% block title %} {% endblock %}</title>
 	</head>
-	<body>
+	<body class="h-100">
 		{% include 'navbar.html' %}
-		<main class="my-5 container">
+		<main class="my-5 container h-100">
 			{% for category, msg in get_flashed_messages(with_categories=true)
 			%}
 			<div class="alert alert-{{category}}" role="alert">{{ msg }}</div>
