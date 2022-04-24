@@ -30,7 +30,9 @@
 					name="csrf_token"
 					value="{{ csrf_token() }}"
 				/>
-				<button class="btn btn-primary" type="submit">Logout</button>
+				<button class="btn btn-link nav=item nav-link" type="submit">
+					Logout
+				</button>
 			</form>
 			{% else %} {{ nav_link('user_register', 'Register') }} {{
 			nav_link('login', 'Login') }} {% endif %}
