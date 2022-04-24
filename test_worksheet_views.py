@@ -1,23 +1,16 @@
 from unittest import TestCase
 
 from app import app
-from flask import session, url_for
-#from models import db
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql:///worksheet_generator_test"
-app.config['SQLALCHEMY_ECHO'] = False
 app.config['TESTING'] = True
 app.config['DEBUG_TB_HOSTS'] = ['dont-show-debug-toolbar']
 app.config['WTF_CSRF_ENABLED'] = False
 
-#db.drop_all()
-#db.create_all()
-
 class WorksheetViewsTestCase(TestCase):
     """Test views for worksheets."""
         
-    def test_root_route(self):
-        """Testing the route route."""
+    def test_index_route(self):
+        """Testing the index route."""
         with app.test_client() as client:
             resp = client.get("/")
             html = resp.get_data(as_text=True)
@@ -25,15 +18,15 @@ class WorksheetViewsTestCase(TestCase):
             self.assertEqual(resp.status_code, 200)
             self.assertIn('<h1>Math Worksheet Generator</h1>', html)
             
-    def test_root_post_route(self):
-        """Testing submitting the form to create a new worksheet on the root route."""
+    def test_index_post_route(self):
+        """Testing submitting the form to create a new worksheet on the index route."""
         with app.test_client() as client:
             data = {'name': 'Test', 'operations': 'random', 'number_questions': 20, 'minimum': 0, 'maximum': 10, 'allow_negative': True}
             resp = client.post('/', data=data, follow_redirects=True)
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Generated Worksheet</h1>', html)
+            self.assertIn('<h1 class="text-center">Generated Worksheet</h1>', html)
             with client.session_transaction() as session:
                 self.assertIsNotNone(session["questions"])
                 

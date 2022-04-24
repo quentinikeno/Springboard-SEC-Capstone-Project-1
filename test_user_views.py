@@ -49,7 +49,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Register Your New Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Register Your New Account</h1>', html)
             
     def test_register_post(self):
         """Can a user register a new account?"""
@@ -59,7 +59,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             with client.session_transaction() as session:
                 self.assertIsNotNone(session['user'])
                 
@@ -71,7 +71,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Register Your New Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Register Your New Account</h1>', html)
             self.assertIn('That username is already taken by another user.  Please use a different username.', html)
             with client.session_transaction() as session:
                 self.assertIsNone(session.get('user'))
@@ -84,7 +84,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Register Your New Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Register Your New Account</h1>', html)
             self.assertIn('That email is already taken by another user.  Please use a different email address.', html)
             with client.session_transaction() as session:
                 self.assertIsNone(session.get('user'))            
@@ -96,7 +96,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Log In to Your Account</h1>', html)
             
     def test_login_post(self):
         """Can a user login?"""
@@ -106,7 +106,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             with client.session_transaction() as session:
                 self.assertEqual(session['user'], self.user.id)
                 
@@ -155,7 +155,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Log In to Your Account</h1>', html)
             self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
             with client.session_transaction() as session:
                 self.assertIsNone(session.get('user'))
@@ -169,7 +169,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             
     def test_user_show_not_logged_in(self):
@@ -179,7 +179,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Log In to Your Account</h1>', html)
             self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
             
     def test_user_edit_get(self):
@@ -191,7 +191,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Account\n\t</button>', html)
             
@@ -205,7 +205,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("updatedUser", html)
             self.assertIn("Account successfully updated.", html)
             
@@ -219,7 +219,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn('JaneDoe', html)
             self.assertIn("Account successfully updated.", html)
             
@@ -233,7 +233,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('<button class="btn btn-secondary" type="submit">\n\t\tApply Changes to Your Account\n\t</button>', html)
             self.assertIn("Invalid password.  Please make sure your password is correct.", html)
@@ -246,7 +246,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Log In to Your Account</h1>', html)
             self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
             
     def test_user_edit_post_duplicate_username(self):
@@ -259,7 +259,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('That username is already taken by another user.  Please use a different username.', html)
             
@@ -273,7 +273,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('That email is already taken by another user.  Please use a different email address.', html)
             
@@ -286,7 +286,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('<button class="btn btn-danger" type="submit">Delete Your Account</button>', html)
             
@@ -313,7 +313,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Log In to Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Log In to Your Account</h1>', html)
             self.assertIn("Access unauthorized.  Please log in first to view this page.", html)
             
     def test_user_delete_post_wrong_password(self):
@@ -326,7 +326,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('<button class="btn btn-danger" type="submit">Delete Your Account</button>', html)
             self.assertIn("Invalid password.  Please make sure your password is correct.", html)
@@ -341,7 +341,7 @@ class UserViewsTestCase(TestCase):
             html = resp.get_data(as_text=True)
             
             self.assertEqual(resp.status_code, 200)
-            self.assertIn('<h1>Your Account</h1>', html)
+            self.assertIn('<h1 class="text-center">Your Account</h1>', html)
             self.assertIn("JaneDoe", html)
             self.assertIn('<button class="btn btn-danger" type="submit">Delete Your Account</button>', html)
             self.assertIn('Your account has not been deleted.  To delete your account please select &#34;Yes&#34; from the dropdown below.', html)
