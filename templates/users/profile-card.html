@@ -1,14 +1,15 @@
 {% from "./macros/macros.html" import nav_link with context %}
 <h1>Your Account</h1>
 <div class="card text-center my-4">
+	<div class="card-header">
+		<ul class="nav nav-pills card-header-pills nav-fill">
+			{{ nav_link('user_show', 'Your Worksheets') }} {{
+			nav_link('user_edit', 'Edit Your Account') }} {{
+			nav_link('user_delete', 'Delete Your Account') }}
+		</ul>
+	</div>
 	<div class="card-body">
 		<i class="fa-solid fa-user fa-5x"></i>
 		<h5 class="card-title mt-3">{{user.username}}</h5>
-	</div>
-	<div class="card-footer">
-		<ul class="nav nav-tabs card-header-tabs nav-fill">
-			{{ nav_link('user_show', 'Your Worksheets') }}
-            {{ nav_link('user_edit', 'Edit Your Account') }}
-            {{ nav_link('user_delete', 'Delete Your Account') }}
 	</div>
 </div>
