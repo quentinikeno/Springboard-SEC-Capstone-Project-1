@@ -14,7 +14,7 @@ $(".upload-form").on("submit", function () {
 	);
 	submitButton = $(".upload-form button");
 	submitButton
-		.text("Loading...  ")
+		.text("Saving...  ")
 		.append(buttonLoading)
 		.prop("disabled", true);
 });
