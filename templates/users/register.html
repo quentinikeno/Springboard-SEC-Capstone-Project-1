@@ -1,9 +1,10 @@
 {% extends './base.html' %} {% block title %} Register New User {% endblock %}
 {% block content %}
-<h1>Register Your New Account</h1>
-<form action="{{ url_for('user_register') }}" method="post">
-	{% include './form.html' %}
-	<button class="btn btn-primary" type="submit">Sign Up!</button>
-</form>
-
+<h1 class="text-center">Register Your New Account</h1>
+<div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5 mx-auto my-5">
+	<form action="{{ url_for('user_register') }}" method="post">
+		{% include './form.html' %}
+		<button class="btn btn-primary" type="submit">Sign Up!</button>
+	</form>
+</div>
 {% endblock %}
