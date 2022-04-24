@@ -1,3 +1,17 @@
+body {
+	font-family: "Quicksand", "PT Sans", arial, sans-serif;
+}
+
 .text-answer {
 	color: red;
+}
+
+#jumbotron {
+	font-family: "Coming Soon", cursive;
+	background-color: #497959;
+	border: solid 1rem #e7b476;
+}
+
+#jumbotron > h1 {
+	font-family: "Coming Soon", cursive;
 }
