@@ -1,7 +1,5 @@
 # Math Worksheet Generator
 
----
-
 ### What is this?
 
 This app allows users to create their very own, randomly generated math worksheets.
