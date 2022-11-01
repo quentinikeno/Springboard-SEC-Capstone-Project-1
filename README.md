@@ -10,6 +10,9 @@ On the home page, users will be shown a form where they can specify parameters f
 
 Any user will be able to generate a worksheet and answer key without signing up. To save and access their worksheets for later, the user will have to create an account.
 
+## Video Demo of the App
+[Demo on YouTube](https://www.youtube.com/embed/9ydG9SeEz8s)
+
 ## Deployment
 
 Link to deployed app: https://math-worksheet-generator.herokuapp.com/
