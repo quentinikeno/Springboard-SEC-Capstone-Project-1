@@ -1,2 +1,0 @@
-[phases.setup]
-nixPkgs = ["...", "pango"] # Install the pango package from Nix
