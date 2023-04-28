@@ -1,2 +1,2 @@
 [phases.setup]
-nixPkgs = ["...", "pango"] # Install the pango package from Nix
+aptPkgs = ["...", "libpangocairo-1.0-0"]   # Install the libpangocairo-1.0-0 package with apt-get
