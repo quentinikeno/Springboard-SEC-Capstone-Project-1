@@ -1,2 +1,0 @@
-[phases.setup]
-aptPkgs = ["...", "libpangocairo-1.0-0"]   # Install the libpangocairo-1.0-0 package with apt-get
