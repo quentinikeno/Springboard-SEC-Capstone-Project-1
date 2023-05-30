@@ -37,7 +37,7 @@ csrf = CSRFProtect(app)
 
 app.jinja_env.filters['date_time_format'] = date_time_format
 
-X_MATH_API_BASE_URL = "https://x-math.herokuapp.com/api"
+API_BASE_URL = "https://web-production-a407.up.railway.app"
 
 ###################################################################################################
 # Route Decorators
@@ -96,7 +96,7 @@ def index():
             params["negative"] = 1
         
         # Do API calls with asyncio
-        questions = asyncio.run(get_math_data(X_MATH_API_BASE_URL, operations, number_questions, params))
+        questions = asyncio.run(get_math_data(API_BASE_URL, operations, number_questions, params))
         
         # Add questions and worksheet name to session
         session['questions'] = questions
