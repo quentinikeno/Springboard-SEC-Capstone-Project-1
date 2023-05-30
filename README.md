@@ -18,6 +18,8 @@ Any user will be able to generate a worksheet and answer key without signing up.
 
 Link to deployed app: https://math-worksheet-generator.onrender.com
 
+Note this is using Render's free tier, so it may take a while to spin up. Please be patient.
+
 ## API's Used:
 
 Formerly used:
